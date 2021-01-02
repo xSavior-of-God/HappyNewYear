@@ -34,7 +34,7 @@ Thanks to this plugin you can make your Minecraft world, lobby or server magical
 
 # Support
 
-[![support image](https://www.spigotmc.org/attachments/df49f8622d8e980cdb32f660948c1a13f2c45a5d-png.581579/)](https://discord.gg/5GqJbRw)
+[![support image](https://www.heroxwar.com/discordLogo.png)](https://discord.gg/5GqJbRw)
 
 **[https://discord.gg/5GqJbRw](https://discord.gg/5GqJbRw)**
 
