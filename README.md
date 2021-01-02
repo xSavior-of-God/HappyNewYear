@@ -40,4 +40,4 @@ Thanks to this plugin you can make your Minecraft world, lobby or server magical
 
 
 # Download
-[![Spigotmc](https://static.spigotmc.org/img/spigot.png)](https://www.spigotmc.org/resources/happy-new-year-%E2%9C%A8-custom-firework-%E2%9C%A8-ingame-real-time-%E2%9C%A8-optimizations-and-more.87326/)
+[![Spigotmc](https://static.spigotmc.org/img/spigot.png)](https://www.spigotmc.org/resources/happy-new-year-%E2%9C%A8-custom-firework-%E2%9C%A8-ingame-real-time-%E2%9C%A8-optimizations-and-more.87326/)[![Mc-Market](https://www.mc-market.org/styles/mcmarketv2/xenforo/logo.og.png)](https://www.mc-market.org/resources/18553/)
