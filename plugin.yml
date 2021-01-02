@@ -1,0 +1,14 @@
+name: HappyNewYear
+main: com.xSavior_of_God.HappyNewYear.Main
+version: 1.1
+api-version: 1.13
+author: xSavior_of_God
+commands:
+  happynewyear:
+    aliases: [hny, newyear, ny]
+    description: reload the plugin
+    usage:  /happynewyear
+permissions:
+  happynewyear.reload:
+    description: you can reload the plugin
+    default: op
