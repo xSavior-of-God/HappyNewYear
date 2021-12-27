@@ -29,7 +29,7 @@ public class AlwayNight {
         }
 
         if (Main.AlwaysNightUseRealTime) {
-            Bukkit.getScheduler().runTaskTimerAsynchronously(Main.instance, new Runnable() {
+            Bukkit.getScheduler().runTaskTimer(Main.instance, new Runnable() {
 
                 @Override
                 public void run() {

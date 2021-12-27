@@ -4,5 +4,7 @@ bin/
 .project
 .settings/
 .git/
+.idea
+idea/
 .idea/
 README.md
