@@ -91,6 +91,10 @@ Worlds:
       Enabled: false
       # Available Time Zones https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
       Timezone: "GMT+1"
+    # Indicates the month number in which the plugin will have to work
+    #  1 => January
+    # -1 => to disable
+    Month: -1
     # At what time does the night starts?
     Starts: "19:00"
     # At what time does the night ends?

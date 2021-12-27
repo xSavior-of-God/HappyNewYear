@@ -1,6 +1,6 @@
 name: HappyNewYear
 main: com.xSavior_of_God.HappyNewYear.Main
-version: 1.1
+version: maven-version-number
 api-version: 1.13
 author: xSavior_of_God
 commands:
