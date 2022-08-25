@@ -64,7 +64,7 @@ public class Runtime {
                                                     .now(ZoneId.of(Main.wm.getTimezone())).format(DateTimeFormatter.ofPattern("HH:mm")).toString());
                                         else
                                             between = Utilis.stringTimeIsBetween(Main.wm.getOnlyNightStarts(), Main.wm.getOnlyNightEnds(),
-                                                    Utilis.format(player.getWorld().getTime()));
+                                                    Utilis.format(player.getWorld().getTime()).toString());
                                     }
 
                                     if (!between)

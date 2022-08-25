@@ -96,9 +96,11 @@ Worlds:
     # -1 => to disable
     Month: -1
     # At what time does the night starts?
+    #   format "hh:mm"
     Starts: "19:00"
     # At what time does the night ends?
-    Ends: "5:30"
+    #   format "hh:mm"
+    Ends: "05:30"
   # List of names of the various worlds
   # Set to 'ALLWORLDS' to use all worlds! (NB: is cAsE sEnSiTiVe )
   List:
