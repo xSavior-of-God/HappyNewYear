@@ -1,14 +1,19 @@
-package com.xSavior_of_God.HappyNewYear;
+package com.xSavior_of_God.HappyNewYear.manager;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class WorldManager implements WorldManagerInterface {
-    private boolean blacklist, onEnabled, irlEnabled;
-    private int month;
-    private String timezone, starts, ends;
-    private List<String> worlds;
+    private boolean blacklist,
+            onEnabled,
+            irlEnabled,
 
+    anEnabled;
+    private int month;
+    private String timezone,
+            starts,
+            ends;
+    private List<String> worlds;
 
     @Override
     public void setBlacklist(boolean blacklist) {
@@ -28,6 +33,16 @@ public class WorldManager implements WorldManagerInterface {
     @Override
     public boolean getOnlyNightEnabled() {
         return onEnabled;
+    }
+
+    @Override
+    public void setAlwaysNightEnabled(boolean anEnabled) {
+        this.anEnabled = anEnabled;
+    }
+
+    @Override
+    public boolean getAlwaysNightEnabled() {
+        return anEnabled;
     }
 
     @Override

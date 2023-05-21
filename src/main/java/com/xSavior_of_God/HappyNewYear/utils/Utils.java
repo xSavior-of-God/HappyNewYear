@@ -1,17 +1,18 @@
-package com.xSavior_of_God.HappyNewYear;
+package com.xSavior_of_God.HappyNewYear.utils;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.logging.Level;
 
-import org.bukkit.Bukkit;
+import com.xSavior_of_God.HappyNewYear.HappyNewYear;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public class Utilis {
+public class Utils {
 
     public static void log(String MESSAGE) {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', MESSAGE));
+        HappyNewYear.instance.getLogger().log(Level.INFO, MESSAGE.replaceAll("&", "\u007f"));
     }
 
     public static void sendMessage(Player PLAYER, String MESSAGE) {
@@ -27,14 +28,12 @@ public class Utilis {
      * From here on you will find some methods made by essentials to format time
      * SOURCE CODE:
      * https://github.com/essentials/Essentials/blob/2.x/Essentials/src/com/earth2me/essentials/utils/DescParseTickFormat.java
-     * <p>
-     * <p>
+     * ============================================
      * This utility class is used for converting between the ingame time in ticks to
      * ingame time as a friendly string. Note that the time is INGAME.
-     * <p>
      * http://www.minecraftwiki.net/wiki/Day/night_cycle
-     *
-     * @author Olof Larsson
+     * ============================================
+     * Author: Olof Larsson
      */
 
     // ============================================
@@ -90,25 +89,25 @@ public class Utilis {
         // Detect ticks format
         try {
             return parseTicks(desc);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
         }
 
         // Detect 24-hour format
         try {
             return parse24(desc);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
         }
 
         // Detect 12-hour format
         try {
             return parse12(desc);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
         }
 
         // Detect aliases
         try {
             return parseAlias(desc);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
         }
 
         // Well we failed to understand...

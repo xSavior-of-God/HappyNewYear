@@ -1,4 +1,4 @@
-package com.xSavior_of_God.HappyNewYear.Events;
+package com.xSavior_of_God.HappyNewYear.api.events;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -13,7 +13,7 @@ import org.bukkit.event.HandlerList;
  */
 public class onFireworkEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
-    private Player PLAYER;
+    private final Player p;
     private boolean isCancelled = false;
 
     @Override
@@ -25,8 +25,8 @@ public class onFireworkEvent extends Event {
         return HANDLERS;
     }
 
-    public onFireworkEvent(Player PLAYER) {
-        this.PLAYER = PLAYER;
+    public onFireworkEvent(Player p) {
+        this.p = p;
     }
 
     /**
@@ -35,7 +35,7 @@ public class onFireworkEvent extends Event {
      * @return Player
      */
     public Player getPlayer() {
-        return PLAYER;
+        return p;
     }
 
     public boolean isCancelled() {

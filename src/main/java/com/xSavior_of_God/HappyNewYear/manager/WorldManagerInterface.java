@@ -1,4 +1,4 @@
-package com.xSavior_of_God.HappyNewYear;
+package com.xSavior_of_God.HappyNewYear.manager;
 
 import java.util.List;
 
@@ -11,6 +11,10 @@ public interface WorldManagerInterface {
     void setOnlyNightEnabled(boolean onEnabled);
 
     boolean getOnlyNightEnabled();
+
+    void setAlwaysNightEnabled(boolean anEnabled);
+
+    boolean getAlwaysNightEnabled();
 
     void setInRealLifeEnabled(boolean irlEnabled);
 
