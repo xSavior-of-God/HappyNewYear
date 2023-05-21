@@ -1,5 +1,5 @@
 name: HappyNewYear
-main: com.xSavior_of_God.HappyNewYear.Main
+main: com.xSavior_of_God.HappyNewYear.HappyNewYear
 version: maven-version-number
 api-version: 1.13
 author: xSavior_of_God
@@ -11,4 +11,10 @@ commands:
 permissions:
   happynewyear.reload:
     description: you can reload the plugin
+    default: op
+  happynewyear.forcestart:
+    description: you can start the fireworks
+    default: op
+  happynewyear.forcestop:
+    description: you can stop the fireworks
     default: op
