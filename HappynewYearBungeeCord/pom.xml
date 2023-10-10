@@ -49,7 +49,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <file>${project.build.directory}/classes/plugin.yml</file>
+                    <file>${project.build.directory}/classes/bungee.yml</file>
                     <replacements>
                         <replacement>
                             <token>maven-version-number</token>
@@ -61,15 +61,15 @@
         </plugins>
     </build>
     <repositories>
-        <repository> <!-- Spigot -->
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        <repository> <!-- BungeeCord -->
+            <id>bungeecord-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
     </repositories>
     <dependencies>
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-api</artifactId>
             <version>1.19-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>

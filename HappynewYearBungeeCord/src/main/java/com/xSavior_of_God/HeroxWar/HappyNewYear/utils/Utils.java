@@ -4,10 +4,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.logging.Level;
-
 import com.xSavior_of_God.HeroxWar.HappyNewYear.HappyNewYear;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class Utils {
 
@@ -15,7 +14,7 @@ public class Utils {
         HappyNewYear.instance.getLogger().log(Level.INFO, MESSAGE.replaceAll("&", "\u007f"));
     }
 
-    public static void sendMessage(Player PLAYER, String MESSAGE) {
+    public static void sendMessage(ProxiedPlayer PLAYER, String MESSAGE) {
         PLAYER.sendMessage(ChatColor.translateAlternateColorCodes('&', MESSAGE));
     }
 

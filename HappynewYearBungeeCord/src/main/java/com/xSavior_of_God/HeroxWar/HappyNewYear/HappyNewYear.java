@@ -2,37 +2,21 @@ package com.xSavior_of_God.HeroxWar.HappyNewYear;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.io.InputStream;
+import java.nio.file.Files;
 
-import com.xSavior_of_God.HeroxWar.HappyNewYear.commands.Command;
 import com.xSavior_of_God.HeroxWar.HappyNewYear.events.HappyNewYearListeners;
-import com.xSavior_of_God.HeroxWar.HappyNewYear.manager.WorldManager;
-import com.xSavior_of_God.HeroxWar.HappyNewYear.tasks.AlwaysNightTask;
-import com.xSavior_of_God.HeroxWar.HappyNewYear.tasks.Task;
-import com.xSavior_of_God.HeroxWar.HappyNewYear.utils.CommentedConfiguration;
 import com.xSavior_of_God.HeroxWar.HappyNewYear.utils.Utils;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
+import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
 
-public class HappyNewYear extends JavaPlugin {
+public class HappyNewYear extends Plugin {
     public static HappyNewYear instance;
-    public static boolean
-            Enabled,
-            ForceStart,
-            ForceStop;
-    public static int Timer,
-            AmountPerPlayer,
-            RandomSpawnPosition_Horizontal,
-            RandomSpawnPosition_Vertical,
-            ExplosionHeight,
-            Limit;
-    public static List<String>
-            FireworkEffectTypes;
+    public static boolean Enabled;
 
-    private com.xSavior_of_God.HeroxWar.HappyNewYear.tasks.AlwaysNightTask AlwaysNightTask;
-    private Task FireworkTask;
-
-    public static WorldManager wm = new WorldManager();
+    private static Configuration config;
 
     public void onEnable() {
         instance = this;
@@ -47,63 +31,41 @@ public class HappyNewYear extends JavaPlugin {
                 + "\r\n");
 
         final File configFile = new File(this.getDataFolder(), "config.yml");
+        InputStream inputStream = getResourceAsStream("config.yml");
         if (!configFile.exists()) {
-            saveResource("config.yml", false);
+            try (InputStream in = getResourceAsStream("config.yml")) {
+                Files.copy(in, configFile.toPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        CommentedConfiguration cfg = CommentedConfiguration.loadConfiguration(configFile);
+
         try {
-            cfg.syncWithConfig(configFile, this.getResource("config.yml"), "FireworkEffectTypes", "Worlds.List");
+            config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(this.getDataFolder(), "config.yml"));
         } catch (IOException e) {
             e.printStackTrace();
             return;
         }
 
-        ForceStart = false;
-
         loadConfig();
-        getCommand("happynewyear").setExecutor(new Command());
-        Bukkit.getPluginManager().registerEvents(new HappyNewYearListeners(), this);
+        getProxy().getPluginManager().registerListener(this, new HappyNewYearListeners());
 
         if (Enabled) {
-            FireworkTask = new Task();
-            if (wm.getAlwaysNightEnabled() || wm.getInRealLifeEnabled())
-                this.AlwaysNightTask = new AlwaysNightTask();
-        }
-        else
+
+        } else
             Utils.log("&4HEY! &fBefore you can use me, you need to configure and enable me from config.yml ( Remember to set \"Enabled\" to true ! )");
     }
 
     public void onDisable() {
-        if ((this.AlwaysNightTask != null || wm.getAlwaysNightEnabled()) && this.AlwaysNightTask != null)
-            this.AlwaysNightTask.StopTask();
-        if ((this.FireworkTask != null || Enabled) && this.FireworkTask != null)
-            this.FireworkTask.StopTask();
         Utils.log("&eHappy New Year &cDisabled!");
+    }
+
+    private Configuration getConfig() {
+        return config;
     }
 
     private void loadConfig() {
         Enabled = getConfig().getBoolean("Enabled");
-        Limit = getConfig().getInt("Limit");
-        Timer = getConfig().getInt("Timer");
-        AmountPerPlayer = getConfig().getInt("AmountPerPlayer");
-        RandomSpawnPosition_Horizontal = getConfig().getInt("RandomSpawnPosition.Horizontal");
-        RandomSpawnPosition_Vertical = getConfig().getInt("RandomSpawnPosition.Vertical");
-        ExplosionHeight = getConfig().getInt("ExplosionHeight");
-        FireworkEffectTypes = getConfig().getStringList("FireworkEffectTypes");
-        wm.setBlacklist(getConfig().getBoolean("Worlds.Blacklist"));
-        wm.setOnlyNightEnabled(getConfig().getBoolean("Worlds.OnlyOnNight.Enabled"));
-        wm.setAlwaysNightEnabled(getConfig().getBoolean("Worlds.AlwaysNight.Enabled"));
-        wm.setInRealLifeEnabled(getConfig().getBoolean("Worlds.UseRealTime.Enabled"));
-        wm.setTimezone(getConfig().getString("Worlds.UseRealTime.Timezone"));
-        wm.setMonth(getConfig().getInt("Worlds.Month"));
-        wm.setOnlyNightStarts(getConfig().getString("Worlds.Starts"));
-        wm.setOnlyNightEnds(getConfig().getString("Worlds.Ends"));
-        List<String> worlds = getConfig().getStringList("Worlds.List");
-        if (worlds.contains("ALLWORLDS")) {
-            worlds.clear();
-            Bukkit.getServer().getWorlds().forEach(world -> worlds.add(world.getName()));
-        }
-        wm.setWorldsName(worlds);
     }
 
 }
