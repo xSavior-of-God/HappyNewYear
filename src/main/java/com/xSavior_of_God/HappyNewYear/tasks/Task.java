@@ -83,6 +83,7 @@ public class Task {
                     return;
             }
 
+
             Chunk chunk = player.getLocation().getChunk();
             if (check.containsKey(chunk)) {
                 if (check.get(chunk) > HappyNewYear.limit) {
@@ -92,7 +93,6 @@ public class Task {
             } else {
                 check.put(chunk, 1);
             }
-
 
             if (spawnAnimationType.contains("REALISTIC")) {
                 // To allow the spawn of the fireworks, we proceed to switch to the primary thread
