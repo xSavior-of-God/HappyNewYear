@@ -22,19 +22,19 @@ import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.FireworkMeta;
 
-import com.xSavior_of_God.HappyNewYear.api.events.onFireworkEvent;
+import com.xSavior_of_God.HappyNewYear.api.events.OnFireworkEvent;
 import org.bukkit.scheduler.BukkitTask;
 
 public class Task {
-    private final BukkitTask FireworkTask;
+    private final BukkitTask fireworkTask;
 
     public Task() {
-        FireworkTask = Bukkit.getScheduler().runTaskTimerAsynchronously(HappyNewYear.instance, () -> {
+        fireworkTask = Bukkit.getScheduler().runTaskTimerAsynchronously(HappyNewYear.instance, () -> {
             // This variable is reset every time the thread is called
             Map<Chunk, Integer> check = new HashMap<>();
 
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (HappyNewYear.ForceStop)
+                if (HappyNewYear.forceStop)
                     return;
 
                 // check if the World name is in BlackList
@@ -43,15 +43,15 @@ public class Task {
                         || (!HappyNewYear.wm.getBlacklist() && !HappyNewYear.wm.getWorldsName().contains(player.getWorld().getName())))
                     return;
 
-                if (HappyNewYear.wm.getOnlyNightEnabled()) {
+                if (HappyNewYear.wm.getOnNightEnabled()) {
                     boolean between = false;
 
                     if (HappyNewYear.wm.getMonth() == -1 || LocalDate.now(ZoneId.of(HappyNewYear.wm.getTimezone())).getMonthValue() == HappyNewYear.wm.getMonth()) {
                         if (HappyNewYear.wm.getInRealLifeEnabled())
-                            between = Utils.stringTimeIsBetween(HappyNewYear.wm.getOnlyNightStarts(), HappyNewYear.wm.getOnlyNightEnds(), LocalTime
+                            between = Utils.stringTimeIsBetween(HappyNewYear.wm.getOnNightStarts(), HappyNewYear.wm.getOnNightEnds(), LocalTime
                                     .now(ZoneId.of(HappyNewYear.wm.getTimezone())).format(DateTimeFormatter.ofPattern("HH:mm")));
                         else
-                            between = Utils.stringTimeIsBetween(HappyNewYear.wm.getOnlyNightStarts(), HappyNewYear.wm.getOnlyNightEnds(),
+                            between = Utils.stringTimeIsBetween(HappyNewYear.wm.getOnNightStarts(), HappyNewYear.wm.getOnNightEnds(),
                                     Utils.format(player.getWorld().getTime()));
                     }
 
@@ -61,7 +61,7 @@ public class Task {
 
                 Chunk chunk = player.getLocation().getChunk();
                 if (check.containsKey(chunk)) {
-                    if (check.get(chunk) > HappyNewYear.Limit) {
+                    if (check.get(chunk) > HappyNewYear.limit) {
                         continue;
                     }
                     check.replace(chunk, check.get(chunk) + 1);
@@ -73,19 +73,19 @@ public class Task {
                 // (to optimize and not burden the primary thread we perform the checks in the async)
                 Bukkit.getScheduler().runTask(HappyNewYear.instance, () -> {
                     // run your custom Event that Spawns fireworks
-                    onFireworkEvent event = new onFireworkEvent(player);
+                    OnFireworkEvent event = new OnFireworkEvent(player);
                     Bukkit.getPluginManager().callEvent(event);
                     // Check if the event is canceled
                     if (event.isCancelled())
                         return;
 
-                    for (int c = 0; c < HappyNewYear.AmountPerPlayer; c++) {
-                        spawnFireworks(randomLocation(player.getLocation()), HappyNewYear.FireworkEffectTypes
-                                .get(ThreadLocalRandom.current().nextInt(0, HappyNewYear.FireworkEffectTypes.size())));
+                    for (int c = 0; c < HappyNewYear.amountPerPlayer; c++) {
+                        spawnFireworks(randomLocation(player.getLocation()), HappyNewYear.fireworkEffectTypes
+                                .get(ThreadLocalRandom.current().nextInt(0, HappyNewYear.fireworkEffectTypes.size())));
                     }
                 });
             }
-        }, 5 * 20L, HappyNewYear.Timer);
+        }, 5 * 20L, HappyNewYear.timer);
     }
 
     private void spawnFireworks(final Location LOC, final String TYPE) {
@@ -122,17 +122,17 @@ public class Task {
     }
 
     private Location randomLocation(final Location LOC) {
-        int Horizontal = ThreadLocalRandom.current().nextInt(HappyNewYear.RandomSpawnPosition_Horizontal * -1,
-                HappyNewYear.RandomSpawnPosition_Horizontal + 1);
-        int Horizontal2 = ThreadLocalRandom.current().nextInt(HappyNewYear.RandomSpawnPosition_Horizontal * -1,
-                HappyNewYear.RandomSpawnPosition_Horizontal + 1);
-        int Vertical = ThreadLocalRandom.current().nextInt(HappyNewYear.RandomSpawnPosition_Vertical * -1,
-                HappyNewYear.RandomSpawnPosition_Vertical + 1);
-        return LOC.add(Horizontal, Vertical + HappyNewYear.ExplosionHeight, Horizontal2);
+        int Horizontal = ThreadLocalRandom.current().nextInt(HappyNewYear.randomSpawnPosition_Horizontal * -1,
+                HappyNewYear.randomSpawnPosition_Horizontal + 1);
+        int Horizontal2 = ThreadLocalRandom.current().nextInt(HappyNewYear.randomSpawnPosition_Horizontal * -1,
+                HappyNewYear.randomSpawnPosition_Horizontal + 1);
+        int Vertical = ThreadLocalRandom.current().nextInt(HappyNewYear.randomSpawnPosition_Vertical * -1,
+                HappyNewYear.randomSpawnPosition_Vertical + 1);
+        return LOC.add(Horizontal, Vertical + HappyNewYear.explosionHeight, Horizontal2);
     }
 
     public void StopTask() {
-        FireworkTask.cancel();
+        fireworkTask.cancel();
     }
 
 }

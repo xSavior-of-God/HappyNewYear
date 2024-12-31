@@ -457,7 +457,6 @@ public class Reload {
         } catch (Exception ignored) {
         }
 
-
         System.gc();
     }
 

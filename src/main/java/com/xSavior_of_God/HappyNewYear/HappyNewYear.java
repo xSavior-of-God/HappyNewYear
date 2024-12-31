@@ -2,7 +2,6 @@ package com.xSavior_of_God.HappyNewYear;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.xSavior_of_God.HappyNewYear.commands.Command;
@@ -18,20 +17,20 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class HappyNewYear extends JavaPlugin {
     public static HappyNewYear instance;
     public static boolean
-            Enabled,
-            ForceStart,
-            ForceStop;
-    public static int Timer,
-            AmountPerPlayer,
-            RandomSpawnPosition_Horizontal,
-            RandomSpawnPosition_Vertical,
-            ExplosionHeight,
-            Limit;
+            enabled,
+            forceStart,
+            forceStop;
+    public static int timer,
+            amountPerPlayer,
+            randomSpawnPosition_Horizontal,
+            randomSpawnPosition_Vertical,
+            explosionHeight,
+            limit;
     public static List<String>
-            FireworkEffectTypes;
+            fireworkEffectTypes;
 
-    private com.xSavior_of_God.HappyNewYear.tasks.AlwaysNightTask AlwaysNightTask;
-    private Task FireworkTask;
+    private AlwaysNightTask alwaysNightTask;
+    private Task fireworkTask;
 
     public static WorldManager wm = new WorldManager();
 
@@ -59,51 +58,51 @@ public class HappyNewYear extends JavaPlugin {
             return;
         }
 
-        ForceStart = false;
+        forceStart = false;
 
         loadConfig();
         getCommand("happynewyear").setExecutor(new Command());
         Bukkit.getPluginManager().registerEvents(new HappyNewYearListeners(), this);
 
-        if (Enabled) {
-            FireworkTask = new Task();
+        if (enabled) {
+            fireworkTask = new Task();
             if (wm.getAlwaysNightEnabled() || wm.getInRealLifeEnabled())
-                this.AlwaysNightTask = new AlwaysNightTask();
-        }
-        else
+                this.alwaysNightTask = new AlwaysNightTask();
+        } else
             Utils.log("&4HEY! &fBefore you can use me, you need to configure and enable me from config.yml ( Remember to set \"Enabled\" to true ! )");
     }
 
     public void onDisable() {
-        if ((this.AlwaysNightTask != null || wm.getAlwaysNightEnabled()) && this.AlwaysNightTask != null)
-            this.AlwaysNightTask.StopTask();
-        if ((this.FireworkTask != null || Enabled) && this.FireworkTask != null)
-            this.FireworkTask.StopTask();
+        if ((this.alwaysNightTask != null || wm.getAlwaysNightEnabled()) && this.alwaysNightTask != null)
+            this.alwaysNightTask.StopTask();
+        if ((this.fireworkTask != null || enabled) && this.fireworkTask != null)
+            this.fireworkTask.StopTask();
         Utils.log("&eHappy New Year &cDisabled!");
     }
 
     private void loadConfig() {
-        Enabled = getConfig().getBoolean("Enabled");
-        Limit = getConfig().getInt("Limit");
-        Timer = getConfig().getInt("Timer");
-        AmountPerPlayer = getConfig().getInt("AmountPerPlayer");
-        RandomSpawnPosition_Horizontal = getConfig().getInt("RandomSpawnPosition.Horizontal");
-        RandomSpawnPosition_Vertical = getConfig().getInt("RandomSpawnPosition.Vertical");
-        ExplosionHeight = getConfig().getInt("ExplosionHeight");
-        FireworkEffectTypes = getConfig().getStringList("FireworkEffectTypes");
+        enabled = getConfig().getBoolean("Enabled");
+        limit = getConfig().getInt("Limit");
+        timer = getConfig().getInt("Timer");
+        amountPerPlayer = getConfig().getInt("AmountPerPlayer");
+        randomSpawnPosition_Horizontal = getConfig().getInt("RandomSpawnPosition.Horizontal");
+        randomSpawnPosition_Vertical = getConfig().getInt("RandomSpawnPosition.Vertical");
+        explosionHeight = getConfig().getInt("ExplosionHeight");
+        fireworkEffectTypes = getConfig().getStringList("FireworkEffectTypes");
         wm.setBlacklist(getConfig().getBoolean("Worlds.Blacklist"));
-        wm.setOnlyNightEnabled(getConfig().getBoolean("Worlds.OnlyOnNight.Enabled"));
+        wm.setOnNightEnabled(getConfig().getBoolean("Worlds.OnlyOnNight.Enabled"));
         wm.setAlwaysNightEnabled(getConfig().getBoolean("Worlds.AlwaysNight.Enabled"));
         wm.setInRealLifeEnabled(getConfig().getBoolean("Worlds.UseRealTime.Enabled"));
         wm.setTimezone(getConfig().getString("Worlds.UseRealTime.Timezone"));
         wm.setMonth(getConfig().getInt("Worlds.Month"));
-        wm.setOnlyNightStarts(getConfig().getString("Worlds.Starts"));
-        wm.setOnlyNightEnds(getConfig().getString("Worlds.Ends"));
+        wm.setOnNightStarts(getConfig().getString("Worlds.Starts"));
+        wm.setOnNightEnds(getConfig().getString("Worlds.Ends"));
         List<String> worlds = getConfig().getStringList("Worlds.List");
         if (worlds.contains("ALLWORLDS")) {
             worlds.clear();
             Bukkit.getServer().getWorlds().forEach(world -> worlds.add(world.getName()));
         }
+        Utils.log("&aHappyNewYear will work in this worlds: &f" + worlds.stream().reduce((a, b) -> a + ", " + b).orElse("&cNO WORLD FOUND!"));
         wm.setWorldsName(worlds);
     }
 

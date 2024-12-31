@@ -8,9 +8,9 @@ public interface WorldManagerInterface {
 
     boolean getBlacklist();
 
-    void setOnlyNightEnabled(boolean onEnabled);
+    void setOnNightEnabled(boolean onEnabled);
 
-    boolean getOnlyNightEnabled();
+    boolean getOnNightEnabled();
 
     void setAlwaysNightEnabled(boolean anEnabled);
 
@@ -28,13 +28,13 @@ public interface WorldManagerInterface {
 
     int getMonth();
 
-    void setOnlyNightStarts(String starts);
+    void setOnNightStarts(String starts);
 
-    String getOnlyNightStarts();
+    String getOnNightStarts();
 
-    void setOnlyNightEnds(String ends);
+    void setOnNightEnds(String ends);
 
-    String getOnlyNightEnds();
+    String getOnNightEnds();
 
     void setWorldsName(List<String> worlds);
 

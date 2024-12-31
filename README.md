@@ -9,7 +9,7 @@ Thanks to this plugin you can make your Minecraft world magical for **THE NEW YE
     <br/>
     <br/>
     <br/>
-    <img src="https://media4.giphy.com/media/FvtsRo25oiWv9r9Tje/giphy.gif?cid=790b76110ddba862cd0662fa0cc07b96f35d8568aedb929a&rid=giphy.gif&ct=g">
+    <img alt="New Year celebration animation" src="https://media4.giphy.com/media/FvtsRo25oiWv9r9Tje/giphy.gif?cid=790b76110ddba862cd0662fa0cc07b96f35d8568aedb929a&rid=giphy.gif&ct=g">
 </div>
 
 ## Features
@@ -31,8 +31,7 @@ set to RANDOM all types will be used)
 
 ● Ability to decide the time interval in which the fireworks will be generated
 
-● Ability to decide the limit of firework to be generated per chunk, so as to avoid FPS drops or crashes due to too many
-fireworks
+● Ability to decide the limit of fireworks to be generated per chunk, to avoid FPS drops or crashes due to too many
 
 ● Ability to decide in which worlds the fireworks will be spawned
 
