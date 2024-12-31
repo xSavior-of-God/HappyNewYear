@@ -94,7 +94,12 @@ public class Task {
             return;
         }
 
-        final Firework firework = (Firework) LOC.getWorld().spawnEntity(LOC, EntityType.FIREWORK);
+        Firework firework;
+        try {
+            firework = (Firework) LOC.getWorld().spawnEntity(LOC, EntityType.valueOf("FIREWORK_ROCKET"));
+        } catch(Exception ignored) {
+            firework = (Firework) LOC.getWorld().spawnEntity(LOC, EntityType.valueOf("FIREWORK"));
+        }
         final FireworkMeta meta = firework.getFireworkMeta();
         final FireworkEffect.Builder builder = FireworkEffect.builder();
         builder.with(FireworkEffect.Type.valueOf((TYPE.equalsIgnoreCase("RANDOM")

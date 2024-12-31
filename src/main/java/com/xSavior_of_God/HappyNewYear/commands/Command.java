@@ -27,7 +27,7 @@ public class Command implements CommandExecutor {
             if ((sender instanceof ConsoleCommandSender || sender.isOp() || sender.hasPermission("happynewyear.reload")) && args[0].equalsIgnoreCase("reload")) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6Reloading..."));
                 HappyNewYear.instance.reloadConfig();
-                Reload.reload(HappyNewYear.instance.getName());
+                Reload.reload();
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aReloaded!"));
                 return true;
             }
