@@ -55,7 +55,7 @@ RandomSpawnPosition:
 
 # How many blocks in height will the firework have to explode relative
 # to the player's position + Vertical?
-ExplosionHeight: 50
+ExplosionHeight: 40
 
 # Here you can decide the worlds in which to generate the fireworks and the time. 
 Worlds:

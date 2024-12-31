@@ -12,28 +12,48 @@ public class Command implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String commandLabel, String[] args) {
         if (args != null && args.length > 0) {
-            if ((sender instanceof ConsoleCommandSender || sender.isOp() || sender.hasPermission("happynewyear.forcestart")) && args[0].equalsIgnoreCase("start")) {
-                HappyNewYear.ForceStart = !HappyNewYear.ForceStart;
-                HappyNewYear.ForceStop = false;
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&eFireworks successfully started!"));
-                return true;
-            }
-            if ((sender instanceof ConsoleCommandSender || sender.isOp() || sender.hasPermission("happynewyear.forcestop")) && args[0].equalsIgnoreCase("stop")) {
-                HappyNewYear.ForceStop = true;
-                HappyNewYear.ForceStart = false;
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&eFireworks successfully stopped!"));
-                return true;
-            }
-            if ((sender instanceof ConsoleCommandSender || sender.isOp() || sender.hasPermission("happynewyear.reload")) && args[0].equalsIgnoreCase("reload")) {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6Reloading..."));
-                HappyNewYear.instance.reloadConfig();
-                Reload.reload(HappyNewYear.instance.getName());
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aReloaded!"));
-                return true;
+
+            switch (args[0].toLowerCase()) {
+                case "start":
+                    if (sender instanceof ConsoleCommandSender || sender.isOp() || sender.hasPermission("happynewyear.forcestart")) {
+                        HappyNewYear.forceStart = true;
+                        HappyNewYear.forceStop = false;
+                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&eFireworks successfully started!"));
+                        return true;
+                    } else {
+                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cYou don't have permission to use this command!"));
+                    }
+                    break;
+                case "stop":
+                    if (sender instanceof ConsoleCommandSender || sender.isOp() || sender.hasPermission("happynewyear.forcestop")) {
+                        HappyNewYear.forceStop = true;
+                        HappyNewYear.forceStart = false;
+                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&eFireworks successfully stopped!"));
+                        return true;
+                    }
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cYou don't have permission to use this command!"));
+                    break;
+                case "reload":
+                    if (sender instanceof ConsoleCommandSender || sender.isOp() || sender.hasPermission("happynewyear.reload")) {
+                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6Reloading..."));
+                        HappyNewYear.instance.reloadConfig();
+                        Reload.reload();
+                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aReloaded!"));
+                        return true;
+                    }
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cYou don't have permission to use this command!"));
+                    break;
+                default:
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cUnknown command! Usage: /" + commandLabel + " <" + (
+                            sender instanceof ConsoleCommandSender || sender.isOp() || sender.hasPermission("happynewyear.forcestart") ? "start, " : ""
+                    ) + (
+                            sender instanceof ConsoleCommandSender || sender.isOp() || sender.hasPermission("happynewyear.forcestop") ? "stop, " : ""
+                    ) + (
+                            sender instanceof ConsoleCommandSender || sender.isOp() || sender.hasPermission("happynewyear.reload") ? "reload" : ""
+                    ) + ">"));
+                    break;
             }
         }
-
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cUnknown command! Usage: /"+commandLabel+" <start|stop|reload>"));
         return true;
     }
 

@@ -12,7 +12,7 @@ import org.bukkit.World;
 import org.bukkit.scheduler.BukkitTask;
 
 public class AlwaysNightTask {
-    BukkitTask RealTimeTask, AlwaysNightTask;
+    private BukkitTask realTimeTask, alwaysNightTask;
 
     List<World> worlds;
 
@@ -27,7 +27,7 @@ public class AlwaysNightTask {
         worlds.removeIf(w -> !w.getEnvironment().equals(World.Environment.NORMAL));
 
         if (HappyNewYear.wm.getInRealLifeEnabled()) {
-            this.RealTimeTask = Bukkit.getScheduler().runTaskTimer(HappyNewYear.instance, () -> {
+            this.realTimeTask = Bukkit.getScheduler().runTaskTimer(HappyNewYear.instance, () -> {
                 for (World w : worlds) {
                     long time = Utils.parse24(LocalTime.now(ZoneId.of(HappyNewYear.wm.getTimezone()))
                             .format(DateTimeFormatter.ofPattern("HH:mm"))) + 1;
@@ -36,7 +36,7 @@ public class AlwaysNightTask {
                 }
             }, 20L, 1L);
         } else if (HappyNewYear.wm.getAlwaysNightEnabled()) {
-            this.AlwaysNightTask = Bukkit.getScheduler().runTaskTimer(HappyNewYear.instance, () -> {
+            this.alwaysNightTask = Bukkit.getScheduler().runTaskTimer(HappyNewYear.instance, () -> {
                 for (World w : worlds) {
                     if (w.getTime() != 18000L) {
                         w.setTime(18000L);
@@ -48,10 +48,10 @@ public class AlwaysNightTask {
     }
 
     public void StopTask() {
-        if (this.RealTimeTask != null)
-            this.RealTimeTask.cancel();
-        if (this.AlwaysNightTask != null) {
-            this.AlwaysNightTask.cancel();
+        if (this.realTimeTask != null)
+            this.realTimeTask.cancel();
+        if (this.alwaysNightTask != null) {
+            this.alwaysNightTask.cancel();
             for (World w : worlds) {
                 w.setGameRule(org.bukkit.GameRule.DO_DAYLIGHT_CYCLE, true);
             }

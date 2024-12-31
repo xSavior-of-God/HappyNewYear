@@ -7,8 +7,7 @@ public class WorldManager implements WorldManagerInterface {
     private boolean blacklist,
             onEnabled,
             irlEnabled,
-
-    anEnabled;
+            anEnabled;
     private int month;
     private String timezone,
             starts,
@@ -26,12 +25,12 @@ public class WorldManager implements WorldManagerInterface {
     }
 
     @Override
-    public void setOnlyNightEnabled(boolean onEnabled) {
+    public void setOnNightEnabled(boolean onEnabled) {
         this.onEnabled = onEnabled;
     }
 
     @Override
-    public boolean getOnlyNightEnabled() {
+    public boolean getOnNightEnabled() {
         return onEnabled;
     }
 
@@ -76,22 +75,22 @@ public class WorldManager implements WorldManagerInterface {
     }
 
     @Override
-    public void setOnlyNightStarts(String starts) {
+    public void setOnNightStarts(String starts) {
         this.starts = starts;
     }
 
     @Override
-    public String getOnlyNightStarts() {
+    public String getOnNightStarts() {
         return starts;
     }
 
     @Override
-    public void setOnlyNightEnds(String ends) {
+    public void setOnNightEnds(String ends) {
         this.ends = ends;
     }
 
     @Override
-    public String getOnlyNightEnds() {
+    public String getOnNightEnds() {
         return ends;
     }
 

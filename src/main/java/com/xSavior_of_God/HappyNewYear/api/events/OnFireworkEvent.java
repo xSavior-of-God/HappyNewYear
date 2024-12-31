@@ -11,9 +11,9 @@ import org.bukkit.event.HandlerList;
  * @version 1.0
  * @since 2021-01-01
  */
-public class onFireworkEvent extends Event {
+public class OnFireworkEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
-    private final Player p;
+    private final Player player;
     private boolean isCancelled = false;
 
     @Override
@@ -25,17 +25,12 @@ public class onFireworkEvent extends Event {
         return HANDLERS;
     }
 
-    public onFireworkEvent(Player p) {
-        this.p = p;
+    public OnFireworkEvent(Player player) {
+        this.player = player;
     }
 
-    /**
-     * Returns the Player
-     *
-     * @return Player
-     */
     public Player getPlayer() {
-        return p;
+        return player;
     }
 
     public boolean isCancelled() {
