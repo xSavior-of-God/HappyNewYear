@@ -33,7 +33,6 @@ public class Reload {
     final static String nms = (packageName.equals("org.bukkit.craftbukkit") ? "." : "." + packageName.split("\\.")[3] + ".");
     static boolean nmsVers = true;
 
-
     public static PluginDescriptionFile getPluginDescription(File file) throws InvalidDescriptionException {
         if (file == null)
             throw new InvalidDescriptionException("File cannot be null");
@@ -73,6 +72,8 @@ public class Reload {
 
     /**
      * Loads and enables a plugin.
+     *
+     * @param name plugin's name
      */
     public static void load(String name) {
         Plugin target = null;
@@ -299,7 +300,6 @@ public class Reload {
                 return;
             }
         }
-
 
         if (listeners != null && reloadlisteners)
             for (SortedSet<RegisteredListener> set : listeners.values())
@@ -737,5 +737,4 @@ public class Reload {
 
         Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
     }
-
 }
