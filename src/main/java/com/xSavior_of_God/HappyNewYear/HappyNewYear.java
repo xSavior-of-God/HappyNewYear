@@ -2,10 +2,12 @@ package com.xSavior_of_God.HappyNewYear;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.xSavior_of_God.HappyNewYear.commands.Command;
 import com.xSavior_of_God.HappyNewYear.events.HappyNewYearListeners;
+import com.xSavior_of_God.HappyNewYear.hooks.imagefireworksreborn.ImageFireworksRebornHook;
 import com.xSavior_of_God.HappyNewYear.manager.WorldManager;
 import com.xSavior_of_God.HappyNewYear.tasks.AlwaysNightTask;
 import com.xSavior_of_God.HappyNewYear.tasks.Task;
@@ -36,6 +38,8 @@ public class HappyNewYear extends JavaPlugin {
     private String
             spawnAnimationType,
             hourlyTimezone;
+    public static ImageFireworksRebornHook imageFireworksRebornHook;
+    public static List<String> fireworkHooks = new ArrayList<>();
 
     public static WorldManager wm = new WorldManager();
 
@@ -68,6 +72,24 @@ public class HappyNewYear extends JavaPlugin {
         loadConfig();
         getCommand("happynewyear").setExecutor(new Command());
         Bukkit.getPluginManager().registerEvents(new HappyNewYearListeners(), this);
+        fireworkHooks = new ArrayList<>();
+
+
+        fireworkEffectTypes = getConfig().getStringList("FireworkEffectTypes");
+        if(!fireworkEffectTypes.isEmpty())
+            fireworkHooks.add("DEFAULT");
+
+        // Hook ImageFireworksPro
+        if (getConfig().getBoolean("Hooks.ImageFireworksPro.Enabled")) {
+            if (Bukkit.getPluginManager().getPlugin("ImageFireworksPro") != null) {
+                imageFireworksRebornHook = new ImageFireworksRebornHook(getConfig().getStringList("Hooks.ImageFireworksPro.FireworkEffectTypes"));
+                fireworkHooks.add("IMAGEFIREWORKSPRO");
+                Utils.log("[HappyNewYear] &eImageFireworksPro &fHooked!");
+            } else {
+                Utils.log("[HappyNewYear] &eImageFireworksPro &cNot Found!");
+            }
+        }
+
 
         if (enabled) {
             fireworkTask = new Task(spawnAnimationType, hourlyDuration, hourlyTimezone);
@@ -82,6 +104,8 @@ public class HappyNewYear extends JavaPlugin {
             this.alwaysNightTask.StopTask();
         if ((this.fireworkTask != null || enabled) && this.fireworkTask != null)
             this.fireworkTask.StopTask();
+        imageFireworksRebornHook = null;
+        fireworkHooks.clear();
         Utils.log("&eHappy New Year &cDisabled!");
     }
 
@@ -96,7 +120,6 @@ public class HappyNewYear extends JavaPlugin {
         randomSpawnPosition_Horizontal = getConfig().getInt("RandomSpawnPosition.Horizontal");
         randomSpawnPosition_Vertical = getConfig().getInt("RandomSpawnPosition.Vertical");
         explosionHeight = getConfig().getInt("ExplosionHeight");
-        fireworkEffectTypes = getConfig().getStringList("FireworkEffectTypes");
         wm.setBlacklist(getConfig().getBoolean("Worlds.Blacklist"));
         wm.setOnNightEnabled(getConfig().getBoolean("Worlds.OnlyOnNight.Enabled"));
         wm.setAlwaysNightEnabled(getConfig().getBoolean("Worlds.AlwaysNight.Enabled"));

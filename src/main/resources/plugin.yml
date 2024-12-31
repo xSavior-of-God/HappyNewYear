@@ -3,6 +3,8 @@ main: com.xSavior_of_God.HappyNewYear.HappyNewYear
 version: maven-version-number
 api-version: 1.13
 author: xSavior_of_God
+softdepend:
+  - ImageFireworksPro
 commands:
   happynewyear:
     aliases: [hny, newyear, ny]

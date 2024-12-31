@@ -11,8 +11,13 @@ import org.bukkit.entity.Player;
 
 public class Utils {
 
+
     public static void log(String MESSAGE) {
-        HappyNewYear.instance.getLogger().log(Level.INFO, MESSAGE.replaceAll("&", "\u007f"));
+        log(Level.INFO, MESSAGE);
+    }
+
+    public static void log(Level level, String MESSAGE) {
+        HappyNewYear.instance.getLogger().log(level, ChatColor.translateAlternateColorCodes('&', MESSAGE));
     }
 
     public static void sendMessage(Player PLAYER, String MESSAGE) {

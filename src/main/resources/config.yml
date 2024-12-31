@@ -118,3 +118,16 @@ Worlds:
   # (NB: is cAsE sEnSiTiVe)
   List:
     - 'world'
+
+# Dependencies management
+Hooks:
+  # lukyn76's ImageFireworksPro
+  #
+  # Spawn image to fireworks
+  # Source Code: https://github.com/heyxmirko/ImageFireworksPro/
+  ImageFireworksPro:
+    Enabled: false
+    # IDs of the fireworks to be spawned
+    # use 'RANDOM' to spawn a random firework from the full list
+    FireworkEffectTypes:
+      - 'RANDOM'
