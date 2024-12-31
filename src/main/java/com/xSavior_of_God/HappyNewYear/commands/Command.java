@@ -16,7 +16,7 @@ public class Command implements CommandExecutor {
             switch (args[0].toLowerCase()) {
                 case "start":
                     if (sender instanceof ConsoleCommandSender || sender.isOp() || sender.hasPermission("happynewyear.forcestart")) {
-                        HappyNewYear.forceStart = !HappyNewYear.forceStart;
+                        HappyNewYear.forceStart = true;
                         HappyNewYear.forceStop = false;
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&eFireworks successfully started!"));
                         return true;
