@@ -3,12 +3,6 @@
 Thanks to this plugin you can make your Minecraft world magical for **THE NEW YEAR!**
 
 <div align="center">
-    <img alt="Logo" src="https://www.spigotmc.org/data/resource_icons/87/87326.jpg?1609488755" />
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
     <img alt="New Year celebration animation" src="https://media4.giphy.com/media/FvtsRo25oiWv9r9Tje/giphy.gif?cid=790b76110ddba862cd0662fa0cc07b96f35d8568aedb929a&rid=giphy.gif&ct=g">
 </div>
 
@@ -54,4 +48,4 @@ set to RANDOM all types will be used)
 
 # Download
 
-[![Spigotmc](https://static.spigotmc.org/img/spigot.png)](https://www.spigotmc.org/resources/.87326/)          [![BuiltByBit](https://pbs.twimg.com/profile_images/1557308606579556352/suzgxeGs_200x200.jpg)](https://builtbybit.com/resources/18553/)          [![hangar](https://avatars.githubusercontent.com/u/86071345?s=200&v=4)]()          [![modrinth](https://avatars.githubusercontent.com/u/67560307?s=200&v=4)](https://modrinth.com/plugin/happy-new-year/)
+[![Spigotmc](https://static.spigotmc.org/img/spigot.png)](https://www.spigotmc.org/resources/.87326/)          [![BuiltByBit](https://pbs.twimg.com/profile_images/1557308606579556352/suzgxeGs_200x200.jpg)](https://builtbybit.com/resources/18553/)          [![hangar](https://avatars.githubusercontent.com/u/86071345?s=200&v=4)](https://hangar.papermc.io/xSavior_of_God/HappyNewYear)          [![modrinth](https://avatars.githubusercontent.com/u/67560307?s=200&v=4)](https://modrinth.com/plugin/happy-new-year/)

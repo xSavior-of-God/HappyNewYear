@@ -20,7 +20,9 @@ public class HappyNewYear extends JavaPlugin {
             enabled,
             forceStart,
             forceStop;
-    public static int timer,
+    public static int
+            hourlyDuration,
+            timer,
             amountPerPlayer,
             randomSpawnPosition_Horizontal,
             randomSpawnPosition_Vertical,
@@ -31,6 +33,9 @@ public class HappyNewYear extends JavaPlugin {
 
     private AlwaysNightTask alwaysNightTask;
     private Task fireworkTask;
+    private String
+            spawnAnimationType,
+            hourlyTimezone;
 
     public static WorldManager wm = new WorldManager();
 
@@ -65,7 +70,7 @@ public class HappyNewYear extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new HappyNewYearListeners(), this);
 
         if (enabled) {
-            fireworkTask = new Task();
+            fireworkTask = new Task(spawnAnimationType, hourlyDuration, hourlyTimezone);
             if (wm.getAlwaysNightEnabled() || wm.getInRealLifeEnabled())
                 this.alwaysNightTask = new AlwaysNightTask();
         } else
@@ -82,6 +87,9 @@ public class HappyNewYear extends JavaPlugin {
 
     private void loadConfig() {
         enabled = getConfig().getBoolean("Enabled");
+        spawnAnimationType = getConfig().getString("SpawnAnimationType");
+        hourlyDuration = getConfig().getInt("HourlyDuration");
+        hourlyTimezone = getConfig().getString("HourlyTimezone");
         limit = getConfig().getInt("Limit");
         timer = getConfig().getInt("Timer");
         amountPerPlayer = getConfig().getInt("AmountPerPlayer");
