@@ -29,31 +29,43 @@ import org.bukkit.scheduler.BukkitTask;
 public class Task {
     private final BukkitTask fireworkTask;
     private int startHour = 0;
-    private int duration = 0;
+    private int durationTicks = 0;
 
     public Task(String spawnAnimationType, int hourlyDuration, String hourlyTimezone) {
-        if(spawnAnimationType.contains("HOURLY")) {
+        if (spawnAnimationType == null || spawnAnimationType.trim().isEmpty()) {
+            throw new IllegalArgumentException("spawnAnimationType cannot be null or empty");
+        }
+        if (hourlyDuration <= 0) {
+            throw new IllegalArgumentException("hourlyDuration must be positive");
+        }
+        try {
+            ZoneId.of(hourlyTimezone); // Validate timezone
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid timezone: " + hourlyTimezone);
+        }
+
+        if (spawnAnimationType.contains("HOURLY")) {
             fireworkTask = Bukkit.getScheduler().runTaskTimerAsynchronously(HappyNewYear.instance, () -> {
                 // get current hours based on timezone specified
                 int currentHour = LocalTime.now(ZoneId.of(hourlyTimezone)).getHour();
-                if(duration == 0 && startHour != currentHour) {
+                if (durationTicks == 0 && startHour != currentHour) {
                     startHour = currentHour;
-                    duration = hourlyDuration;
+                    durationTicks = hourlyDuration;
                 }
-                if(duration != 0) {
-                    duration = duration - 20;
-                    firworkTask(spawnAnimationType);
+                if (durationTicks != 0) {
+                    durationTicks = durationTicks - HappyNewYear.timer;
+                    fireworkTask(spawnAnimationType);
                 }
-            }, 5 * 20L, 20L);
+            }, 5 * 20L, HappyNewYear.timer);
         } else {
             fireworkTask = Bukkit.getScheduler().runTaskTimerAsynchronously(HappyNewYear.instance, () -> {
-                firworkTask(spawnAnimationType);
+                fireworkTask(spawnAnimationType);
             }, 5 * 20L, HappyNewYear.timer);
         }
 
     }
 
-    private void firworkTask(String spawnAnimationType) {
+    private void fireworkTask(String spawnAnimationType) {
         // This variable is reset every time the thread is called
         Map<Chunk, Integer> check = new HashMap<>();
 

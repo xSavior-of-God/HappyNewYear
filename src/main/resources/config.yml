@@ -18,6 +18,8 @@ Enabled: false
 #   HOURLY             - Spawns multiple fireworks every hour all at once for a limited time (config: HourlyDuration)
 #   STANDARD_REALISTIC - Spawns multiple fireworks randomly (More realistic)
 #   HOURLY_REALISTIC   - Spawns multiple fireworks randomly (More realistic) for a limited time (config: HourlyDuration)
+#
+# Valid values: STANDARD, HOURLY, STANDARD_REALISTIC, HOURLY_REALISTIC
 SpawnAnimationType: STANDARD
 
 # Time in ticks (20 ticks == 1 second) -> 6000 ticks == 5 minutes
