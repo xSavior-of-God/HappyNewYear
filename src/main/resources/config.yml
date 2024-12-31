@@ -13,6 +13,22 @@
 # Set it to true to enable the plugin!
 Enabled: false
 
+# What kind of animation for your fireworks do you like to use?
+#   STANDARD           - Spawns multiple fireworks all at once
+#   HOURLY             - Spawns multiple fireworks every hour all at once for a limited time (config: HourlyDuration)
+#   STANDARD_REALISTIC - Spawns multiple fireworks randomly (More realistic)
+#   HOURLY_REALISTIC   - Spawns multiple fireworks randomly (More realistic) for a limited time (config: HourlyDuration)
+#
+# Valid values: STANDARD, HOURLY, STANDARD_REALISTIC, HOURLY_REALISTIC
+SpawnAnimationType: STANDARD
+
+# Time in ticks (20 ticks == 1 second) -> 6000 ticks == 5 minutes
+# only for HOURLY and HOURLY_LINEAR animations
+HourlyDuration: 6000
+
+# Timezone for the HOURLY and HOURLY_LINEAR animations
+HourlyTimezone: "GMT+2"
+
 # How often should I create a firework? ( /!\ in ticks -> 20 Ticks == 1 Second /!\ )
 Timer: 60
 

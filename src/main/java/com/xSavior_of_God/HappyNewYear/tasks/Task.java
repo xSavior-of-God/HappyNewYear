@@ -6,6 +6,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 
@@ -27,48 +28,104 @@ import org.bukkit.scheduler.BukkitTask;
 
 public class Task {
     private final BukkitTask fireworkTask;
+    private int startHour = 0;
+    private int durationTicks = 0;
 
-    public Task() {
-        fireworkTask = Bukkit.getScheduler().runTaskTimerAsynchronously(HappyNewYear.instance, () -> {
-            // This variable is reset every time the thread is called
-            Map<Chunk, Integer> check = new HashMap<>();
+    public Task(String spawnAnimationType, int hourlyDuration, String hourlyTimezone) {
+        if (spawnAnimationType == null || spawnAnimationType.trim().isEmpty()) {
+            throw new IllegalArgumentException("spawnAnimationType cannot be null or empty");
+        }
+        if (hourlyDuration <= 0) {
+            throw new IllegalArgumentException("hourlyDuration must be positive");
+        }
+        try {
+            ZoneId.of(hourlyTimezone); // Validate timezone
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid timezone: " + hourlyTimezone);
+        }
 
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                if (HappyNewYear.forceStop)
+        if (spawnAnimationType.contains("HOURLY")) {
+            fireworkTask = Bukkit.getScheduler().runTaskTimerAsynchronously(HappyNewYear.instance, () -> {
+                // get current hours based on timezone specified
+                int currentHour = LocalTime.now(ZoneId.of(hourlyTimezone)).getHour();
+                if (durationTicks == 0 && startHour != currentHour) {
+                    startHour = currentHour;
+                    durationTicks = hourlyDuration;
+                }
+                if (durationTicks != 0) {
+                    durationTicks = durationTicks - HappyNewYear.timer;
+                    fireworkTask(spawnAnimationType);
+                }
+            }, 5 * 20L, HappyNewYear.timer);
+        } else {
+            fireworkTask = Bukkit.getScheduler().runTaskTimerAsynchronously(HappyNewYear.instance, () -> {
+                fireworkTask(spawnAnimationType);
+            }, 5 * 20L, HappyNewYear.timer);
+        }
+
+    }
+
+    private void fireworkTask(String spawnAnimationType) {
+        // This variable is reset every time the thread is called
+        Map<Chunk, Integer> check = new HashMap<>();
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (HappyNewYear.forceStop)
+                return;
+
+            // check if the World name is in BlackList
+            if ((HappyNewYear.wm.getBlacklist() && HappyNewYear.wm.getWorldsName().contains(player.getWorld().getName()))
+                    // check if the World name is not in WhiteList
+                    || (!HappyNewYear.wm.getBlacklist() && !HappyNewYear.wm.getWorldsName().contains(player.getWorld().getName())))
+                return;
+
+            if (HappyNewYear.wm.getOnNightEnabled()) {
+                boolean between = false;
+
+                if (HappyNewYear.wm.getMonth() == -1 || LocalDate.now(ZoneId.of(HappyNewYear.wm.getTimezone())).getMonthValue() == HappyNewYear.wm.getMonth()) {
+                    if (HappyNewYear.wm.getInRealLifeEnabled())
+                        between = Utils.stringTimeIsBetween(HappyNewYear.wm.getOnNightStarts(), HappyNewYear.wm.getOnNightEnds(), LocalTime
+                                .now(ZoneId.of(HappyNewYear.wm.getTimezone())).format(DateTimeFormatter.ofPattern("HH:mm")));
+                    else
+                        between = Utils.stringTimeIsBetween(HappyNewYear.wm.getOnNightStarts(), HappyNewYear.wm.getOnNightEnds(),
+                                Utils.format(player.getWorld().getTime()));
+                }
+
+                if (!between)
                     return;
+            }
 
-                // check if the World name is in BlackList
-                if ((HappyNewYear.wm.getBlacklist() && HappyNewYear.wm.getWorldsName().contains(player.getWorld().getName()))
-                        // check if the World name is not in WhiteList
-                        || (!HappyNewYear.wm.getBlacklist() && !HappyNewYear.wm.getWorldsName().contains(player.getWorld().getName())))
-                    return;
 
-                if (HappyNewYear.wm.getOnNightEnabled()) {
-                    boolean between = false;
+            Chunk chunk = player.getLocation().getChunk();
+            if (check.containsKey(chunk)) {
+                if (check.get(chunk) > HappyNewYear.limit) {
+                    continue;
+                }
+                check.replace(chunk, check.get(chunk) + 1);
+            } else {
+                check.put(chunk, 1);
+            }
 
-                    if (HappyNewYear.wm.getMonth() == -1 || LocalDate.now(ZoneId.of(HappyNewYear.wm.getTimezone())).getMonthValue() == HappyNewYear.wm.getMonth()) {
-                        if (HappyNewYear.wm.getInRealLifeEnabled())
-                            between = Utils.stringTimeIsBetween(HappyNewYear.wm.getOnNightStarts(), HappyNewYear.wm.getOnNightEnds(), LocalTime
-                                    .now(ZoneId.of(HappyNewYear.wm.getTimezone())).format(DateTimeFormatter.ofPattern("HH:mm")));
-                        else
-                            between = Utils.stringTimeIsBetween(HappyNewYear.wm.getOnNightStarts(), HappyNewYear.wm.getOnNightEnds(),
-                                    Utils.format(player.getWorld().getTime()));
-                    }
-
-                    if (!between)
+            if (spawnAnimationType.contains("REALISTIC")) {
+                // To allow the spawn of the fireworks, we proceed to switch to the primary thread
+                // (to optimize and not burden the primary thread we perform the checks in the async)
+                Bukkit.getScheduler().runTask(HappyNewYear.instance, () -> {
+                    // run your custom Event that Spawns fireworks
+                    OnFireworkEvent event = new OnFireworkEvent(player);
+                    Bukkit.getPluginManager().callEvent(event);
+                    // Check if the event is canceled
+                    if (event.isCancelled())
                         return;
-                }
 
-                Chunk chunk = player.getLocation().getChunk();
-                if (check.containsKey(chunk)) {
-                    if (check.get(chunk) > HappyNewYear.limit) {
-                        continue;
+                    Random rand = new Random();
+                    for (int c = 0; c < HappyNewYear.amountPerPlayer; c++) {
+                        Bukkit.getScheduler().runTaskLater(HappyNewYear.instance, () -> {
+                            spawnFireworks(randomLocation(player.getLocation()), HappyNewYear.fireworkEffectTypes
+                                    .get(ThreadLocalRandom.current().nextInt(0, HappyNewYear.fireworkEffectTypes.size())));
+                        }, (rand.nextInt(HappyNewYear.timer) + 1));
                     }
-                    check.replace(chunk, check.get(chunk) + 1);
-                } else {
-                    check.put(chunk, 1);
-                }
-
+                });
+            } else {
                 // To allow the spawn of the fireworks, we proceed to switch to the primary thread
                 // (to optimize and not burden the primary thread we perform the checks in the async)
                 Bukkit.getScheduler().runTask(HappyNewYear.instance, () -> {
@@ -85,7 +142,7 @@ public class Task {
                     }
                 });
             }
-        }, 5 * 20L, HappyNewYear.timer);
+        }
     }
 
     private void spawnFireworks(final Location LOC, final String TYPE) {
@@ -97,7 +154,7 @@ public class Task {
         Firework firework;
         try {
             firework = (Firework) LOC.getWorld().spawnEntity(LOC, EntityType.valueOf("FIREWORK_ROCKET"));
-        } catch(Exception ignored) {
+        } catch (Exception ignored) {
             firework = (Firework) LOC.getWorld().spawnEntity(LOC, EntityType.valueOf("FIREWORK"));
         }
         final FireworkMeta meta = firework.getFireworkMeta();
