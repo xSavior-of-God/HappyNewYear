@@ -20,7 +20,7 @@ Enabled: false
 #   HOURLY_REALISTIC   - Spawns multiple fireworks randomly (More realistic) for a limited time (config: HourlyDuration)
 #
 # Valid values: STANDARD, HOURLY, STANDARD_REALISTIC, HOURLY_REALISTIC
-SpawnAnimationType: STANDARD
+SpawnAnimationType: STANDARD_REALISTIC
 
 # Time in ticks (20 ticks == 1 second) -> 6000 ticks == 5 minutes
 # only for HOURLY and HOURLY_LINEAR animations
@@ -38,6 +38,7 @@ Limit: 5
 # How many fireworks will spawn?
 AmountPerPlayer: 5
 # What effect can the firework have?
+# and what is the chance that it will be generated?
 #   - BALL
 #     A small ball effect
 #   - BALL_LARGE
@@ -51,7 +52,18 @@ AmountPerPlayer: 5
 #   - RANDOM
 #     A Random effect
 FireworkEffectTypes:
-  - 'RANDOM'
+  - 'RANDOM%70'
+
+# Change the look direction of the firework effect
+# Available values:
+#   - RANDOM (default)
+#   - PLAYER (towards the player)
+#   - NORTH
+#   - SOUTH
+#   - EAST
+#   - WEST
+# You can also put the integer Yaw value (from -180 to 180)
+FireworkLookDirection: "RANDOM"
 
 # Here you have to indicate the maximum distance at which a firework can be generated
 RandomSpawnPosition:
@@ -126,8 +138,33 @@ Hooks:
   # Spawn image to fireworks
   # Source Code: https://github.com/heyxmirko/ImageFireworksPro/
   ImageFireworksPro:
+    Enabled: true
+    # IDs of the fireworks to be spawned
+    # use 'RANDOM' to spawn a random firework
+    # from the full list.
+    # (NB: these fireworks will be added to the list of
+    # default fireworks)
+    FireworkEffectTypes:
+      - 'RANDOM%30'
+  # Internal recode of ImageFireworksPro plugin
+  # aimed at improving performance and adding new features
+  # directly integrated into HappyNewYear plugin
+  #
+  # Credits to lukyn76 for the original plugin
+  # Source Code: https://github.com/xSavior-of-God/HappyNewYear
+  ImgFireworks:
+    # /!\ WIP - Actually not implemented! /!\
     Enabled: false
     # IDs of the fireworks to be spawned
-    # use 'RANDOM' to spawn a random firework from the full list
+    # use 'RANDOM' to spawn a random firework
+    # from the full list.
+    # (NB: these fireworks will be added to the list of
+    # default fireworks)
+    Images:
+      DOG:
+        path: 'img/dog.png'
+        # Resize the image to the specified size
+        # if not specified, the image size will not be changed
+        resize: '64'
     FireworkEffectTypes:
-      - 'RANDOM'
+        - 'DOG%30'

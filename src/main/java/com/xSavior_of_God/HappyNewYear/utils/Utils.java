@@ -3,10 +3,13 @@ package com.xSavior_of_God.HappyNewYear.utils;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 
 import com.xSavior_of_God.HappyNewYear.HappyNewYear;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
 import org.bukkit.entity.Player;
 
 public class Utils {
@@ -269,4 +272,12 @@ public class Utils {
         return cal.getTime();
     }
 
+    public static void randomColor(FireworkEffect.Builder BUILDER) {
+        int random = ThreadLocalRandom.current().nextInt(1, 10 + 1);
+        for (int i = 0; i < random; ++i) {
+            final Color color = Color.fromBGR(ThreadLocalRandom.current().nextInt(1, 255 + 1),
+                    ThreadLocalRandom.current().nextInt(1, 255 + 1), ThreadLocalRandom.current().nextInt(1, 255 + 1));
+            BUILDER.withColor(color);
+        }
+    }
 }

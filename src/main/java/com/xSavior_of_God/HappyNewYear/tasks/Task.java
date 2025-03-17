@@ -11,6 +11,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 
 import com.xSavior_of_God.HappyNewYear.HappyNewYear;
+import com.xSavior_of_God.HappyNewYear.api.events.onFireworkEvent;
 import com.xSavior_of_God.HappyNewYear.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -23,7 +24,7 @@ import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.FireworkMeta;
 
-import com.xSavior_of_God.HappyNewYear.api.events.OnFireworkEvent;
+import com.xSavior_of_God.HappyNewYear.api.events.PreFireworkEvent;
 import org.bukkit.scheduler.BukkitTask;
 
 public class Task {
@@ -111,7 +112,7 @@ public class Task {
                 // (to optimize and not burden the primary thread we perform the checks in the async)
                 Bukkit.getScheduler().runTask(HappyNewYear.instance, () -> {
                     // run your custom Event that Spawns fireworks
-                    OnFireworkEvent event = new OnFireworkEvent(player);
+                    PreFireworkEvent event = new PreFireworkEvent(player);
                     Bukkit.getPluginManager().callEvent(event);
                     // Check if the event is canceled
                     if (event.isCancelled())
@@ -129,7 +130,7 @@ public class Task {
                 // (to optimize and not burden the primary thread we perform the checks in the async)
                 Bukkit.getScheduler().runTask(HappyNewYear.instance, () -> {
                     // run your custom Event that Spawns fireworks
-                    OnFireworkEvent event = new OnFireworkEvent(player);
+                    PreFireworkEvent event = new PreFireworkEvent(player);
                     Bukkit.getPluginManager().callEvent(event);
                     // Check if the event is canceled
                     if (event.isCancelled())
@@ -143,27 +144,18 @@ public class Task {
         }
     }
 
-    private void spawnFireworks(final Location LOC) {
+    private void spawnFireworks(Location LOC) {
         final String fireworkHook = HappyNewYear.fireworkHooks.get(ThreadLocalRandom.current().nextInt(0, HappyNewYear.fireworkHooks.size()));
-        switch(fireworkHook) {
-            case "IMAGEFIREWORKSPRO":
 
-                if (HappyNewYear.imageFireworksRebornHook != null) {
-                    try {
-                        HappyNewYear.imageFireworksRebornHook.spawnFirework(LOC);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+        String TYPE = HappyNewYear.fireworkEffectTypes.get(ThreadLocalRandom.current().nextInt(0, HappyNewYear.fireworkEffectTypes.size()));
 
-                break;
-            default:
-                spawnVanillaFireworks(LOC, HappyNewYear.fireworkEffectTypes.get(ThreadLocalRandom.current().nextInt(0, HappyNewYear.fireworkEffectTypes.size())));
-                break;
-        }
+        spawnVanillaFireworks(LOC, TYPE);
     }
 
-    private void spawnVanillaFireworks(final Location LOC, final String TYPE) {
+    private void spawnVanillaFireworks(Location LOC, String TYPE) {
+        // DEBUG
+        // Utils.log(Level.INFO, "Spawning vanilla firework: '" + TYPE + "' at " + LOC.toString());
+
         if (LOC.getWorld() == null) {
             Utils.log(Level.WARNING, "Something went wrong while spawning fireworks. World is null!");
             return;
@@ -175,25 +167,38 @@ public class Task {
         } catch (Exception ignored) {
             firework = (Firework) LOC.getWorld().spawnEntity(LOC, EntityType.valueOf("FIREWORK"));
         }
-        final FireworkMeta meta = firework.getFireworkMeta();
-        final FireworkEffect.Builder builder = FireworkEffect.builder();
-        builder.with(FireworkEffect.Type.valueOf((TYPE.equalsIgnoreCase("RANDOM")
-                ? FireworkEffect.Type.values()[ThreadLocalRandom.current().nextInt(0, FireworkEffect.Type.values().length)]
-                .name()
-                : TYPE)));
-        setColor(builder);
-        meta.addEffect(builder.build());
-        firework.setFireworkMeta(meta);
-        Bukkit.getScheduler().runTaskLater(HappyNewYear.instance, firework::detonate, 1L);
+
+
+        // run your custom Event that Spawns fireworks
+        onFireworkEvent event = new onFireworkEvent(LOC, TYPE, firework);
+        Bukkit.getPluginManager().callEvent(event);
+        // Check if the event is canceled
+        if (event.isCancelled()) {
+            firework.remove();
+            return;
+        }
+
+        firework = event.getFirework();
+        TYPE = event.getType();
+
+        if(!TYPE.isEmpty()) {
+            final FireworkMeta meta = firework.getFireworkMeta();
+            final FireworkEffect.Builder builder = FireworkEffect.builder();
+            builder.with(FireworkEffect.Type.valueOf((TYPE.equalsIgnoreCase("RANDOM")
+                    ? FireworkEffect.Type.values()[ThreadLocalRandom.current().nextInt(0, FireworkEffect.Type.values().length)]
+                    .name()
+                    : TYPE)));
+            setColor(builder);
+
+            meta.addEffect(builder.build());
+            firework.setFireworkMeta(meta);
+        }
+
+        Bukkit.getScheduler().runTaskLater(HappyNewYear.instance, (firework)::detonate, 1L);
     }
 
-    private void setColor(final Builder BUILDER) {
-        int random = ThreadLocalRandom.current().nextInt(1, 10 + 1);
-        for (int i = 0; i < random; ++i) {
-            final Color color = Color.fromBGR(ThreadLocalRandom.current().nextInt(1, 255 + 1),
-                    ThreadLocalRandom.current().nextInt(1, 255 + 1), ThreadLocalRandom.current().nextInt(1, 255 + 1));
-            BUILDER.withColor(color);
-        }
+    private void setColor(Builder BUILDER) {
+        Utils.randomColor(BUILDER);
     }
 
     private Location randomLocation(final Location LOC) {
@@ -203,8 +208,35 @@ public class Task {
                 HappyNewYear.randomSpawnPosition_Horizontal + 1);
         int Vertical = ThreadLocalRandom.current().nextInt(HappyNewYear.randomSpawnPosition_Vertical * -1,
                 HappyNewYear.randomSpawnPosition_Vertical + 1);
-        LOC.setYaw(ThreadLocalRandom.current().nextInt(0, 360));
-        LOC.setPitch(ThreadLocalRandom.current().nextInt(0, 360));
+
+        switch (HappyNewYear.fireworkLookDirection) {
+            case "RANDOM":
+                LOC.setYaw(ThreadLocalRandom.current().nextInt(0, 360));
+                LOC.setPitch(ThreadLocalRandom.current().nextInt(0, 360));
+                break;
+            case "NORTH":
+                LOC.setYaw(180);
+                LOC.setPitch(0);
+                break;
+            case "EAST":
+                LOC.setYaw(-90);
+                LOC.setPitch(0);
+                break;
+            case "SOUTH":
+                LOC.setYaw(0);
+                LOC.setPitch(0);
+                break;
+            case "WEST":
+                LOC.setYaw(90);
+                LOC.setPitch(0);
+                break;
+            case "PLAYER":
+                break;
+            default:
+                LOC.setYaw(Integer.parseInt(HappyNewYear.fireworkLookDirection));
+                LOC.setPitch(0);
+        }
+
         return LOC.add(Horizontal, Vertical + HappyNewYear.explosionHeight, Horizontal2);
     }
 

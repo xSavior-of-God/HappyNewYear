@@ -3,6 +3,7 @@ package com.xSavior_of_God.HappyNewYear;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.xSavior_of_God.HappyNewYear.commands.Command;
@@ -32,6 +33,8 @@ public class HappyNewYear extends JavaPlugin {
             limit;
     public static List<String>
             fireworkEffectTypes;
+    public static String
+            fireworkLookDirection;
 
     private AlwaysNightTask alwaysNightTask;
     private Task fireworkTask;
@@ -61,7 +64,7 @@ public class HappyNewYear extends JavaPlugin {
         }
         CommentedConfiguration cfg = CommentedConfiguration.loadConfiguration(configFile);
         try {
-            cfg.syncWithConfig(configFile, this.getResource("config.yml"), "FireworkEffectTypes", "Worlds.List");
+            cfg.syncWithConfig(configFile, this.getResource("config.yml"), "FireworkEffectTypes", "Worlds.List", "Hooks.ImgFireworks.Images");
         } catch (IOException e) {
             e.printStackTrace();
             return;
@@ -76,13 +79,15 @@ public class HappyNewYear extends JavaPlugin {
 
 
         fireworkEffectTypes = getConfig().getStringList("FireworkEffectTypes");
-        if(!fireworkEffectTypes.isEmpty())
+        if (!fireworkEffectTypes.isEmpty())
             fireworkHooks.add("DEFAULT");
 
         // Hook ImageFireworksPro
         if (getConfig().getBoolean("Hooks.ImageFireworksPro.Enabled")) {
             if (Bukkit.getPluginManager().getPlugin("ImageFireworksPro") != null) {
-                imageFireworksRebornHook = new ImageFireworksRebornHook(getConfig().getStringList("Hooks.ImageFireworksPro.FireworkEffectTypes"));
+                final List<String> types = getConfig().getStringList("Hooks.ImageFireworksPro.FireworkEffectTypes");
+                Bukkit.getPluginManager().registerEvents(imageFireworksRebornHook = new ImageFireworksRebornHook(types), this);
+                fireworkEffectTypes.addAll(imageFireworksRebornHook.getFireworksTypes());
                 fireworkHooks.add("IMAGEFIREWORKSPRO");
                 Utils.log("[HappyNewYear] &eImageFireworksPro &fHooked!");
             } else {
@@ -90,6 +95,28 @@ public class HappyNewYear extends JavaPlugin {
             }
         }
 
+        // Convert the list of firework types plus chance in a chance list
+        // that is more realistic to use
+        List<String> _types = new ArrayList<>();
+        for (String s : fireworkEffectTypes) {
+            if (s.contains("%")) {
+                String[] split = s.split("%");
+                if(split.length == 1) {
+                    // Default 100
+                    for (int i = 0; i < 100; i++) {
+                        _types.add(split[0]);
+                    }
+                } else {
+                    for (int i = 0; i < Integer.parseInt(split[1]); i++) {
+                        _types.add(split[0]);
+                    }
+                }
+            } else {
+                _types.add(s);
+            }
+        }
+        Collections.shuffle(_types); // Shuffle the list
+        fireworkEffectTypes = _types;
 
         if (enabled) {
             fireworkTask = new Task(spawnAnimationType, hourlyDuration, hourlyTimezone);
@@ -117,6 +144,24 @@ public class HappyNewYear extends JavaPlugin {
         limit = getConfig().getInt("Limit");
         timer = getConfig().getInt("Timer");
         amountPerPlayer = getConfig().getInt("AmountPerPlayer");
+        fireworkLookDirection = getConfig().getString("FireworkLookDirection");
+        // Validate fireworkLookDirection
+        List<String> directions = new ArrayList<String>() {{
+            add("RANDOM");
+            add("PLAYER");
+            add("NORTH");
+            add("SOUTH");
+            add("EAST");
+            add("WEST");
+        }};
+        if (fireworkLookDirection == null) {
+            Utils.log("&4Invalid fireworkLookDirection: '" + fireworkLookDirection+"', using 'RANDOM'.");
+            fireworkLookDirection = "RANDOM";
+            // check if is a valid integer between -180 and 180
+        } else if (!directions.contains(fireworkLookDirection) && !fireworkLookDirection.matches("-?\\d+(\\.\\d+)?") && !fireworkLookDirection.matches("-?[0-9]+")) {
+            Utils.log("&4Invalid fireworkLookDirection: '" + fireworkLookDirection+"', using 'RANDOM'.");
+            fireworkLookDirection = "RANDOM";
+        }
         randomSpawnPosition_Horizontal = getConfig().getInt("RandomSpawnPosition.Horizontal");
         randomSpawnPosition_Vertical = getConfig().getInt("RandomSpawnPosition.Vertical");
         explosionHeight = getConfig().getInt("ExplosionHeight");
