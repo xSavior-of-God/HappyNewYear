@@ -10,14 +10,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class Utils {
-
-
     public static void log(String MESSAGE) {
         log(Level.INFO, MESSAGE);
     }
 
     public static void log(Level level, String MESSAGE) {
-        HappyNewYear.instance.getLogger().log(level, ChatColor.translateAlternateColorCodes('&', MESSAGE));
+        HappyNewYear.internalLogger.log(level, MESSAGE);
     }
 
     public static void sendMessage(Player PLAYER, String MESSAGE) {

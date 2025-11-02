@@ -1,4 +1,4 @@
-# Happy New Year
+# 🎆 Happy New Year
 
 Thanks to this plugin you can make your Minecraft world magical for **THE NEW YEAR!**
 
@@ -6,37 +6,60 @@ Thanks to this plugin you can make your Minecraft world magical for **THE NEW YE
     <img alt="New Year celebration animation" src="https://media4.giphy.com/media/FvtsRo25oiWv9r9Tje/giphy.gif?cid=790b76110ddba862cd0662fa0cc07b96f35d8568aedb929a&rid=giphy.gif&ct=g">
 </div>
 
-## Features
+## ✨ Features
 
-● Possibility to decide how often to spawn the fireworks
+### 🎇 Fireworks System
 
-● Ability to decide how many fireworks should spawn for each player
+- **Fireworks Animation** - Choose what kind of animation for your fireworks
+    <details>
+    <summary>Animation Types</summary>
 
-● Ability to decide the various types of fireworks effects to be generated (1 random from the list will be chosen, if
-set to RANDOM all types will be used)
+    - **STANDARD** - Spawns multiple fireworks all at once
+    - **HOURLY** - Spawns multiple fireworks every hour all at once for a limited time (config: HourlyDuration)
+    - **STANDARD_REALISTIC** - Spawns multiple fireworks randomly (More realistic)
+    - **HOURLY_REALISTIC** - Spawns multiple fireworks randomly (More realistic) for a limited time (config:
+      HourlyDuration)
+    </details>
 
-● Ability to specify the random conditions under which the generation of fireworks will be based
+- **Customizable Spawn Rate** - Control how often fireworks launch (in ticks)
+- **Per-Player Fireworks** - Set individual firework count for each player
+- **Multiple Effect Types** - Choose from all Minecraft firework effects or use random combinations
+- **Smart Chunk Limits** - Prevent lag with configurable firework limits per chunk
+- **World-Specific** - Enable fireworks only in specific worlds
 
-● Possibility of being able to decide whether to generate fires only at night
+### ⏰ Time Management
 
-● Possibility of being able to decide if the in game time should be based on the current time in real life
+- **Real-Time Synchronization** - Match in-game time with real-world time
+- **Night-Only Mode** - Spawn fireworks only during nighttime
+- **Force Night Time** - Automatically set time to night during celebrations
+- **Custom Time Intervals** - Define precise start and end times for celebrations
 
-● Possibility to force the time to night
+## 📋 Commands
 
-● Ability to decide the time interval in which the fireworks will be generated
+**Aliases:** `/hny`, `/newyear`, `/ny`
 
-● Ability to decide the limit of fireworks to be generated per chunk, to avoid FPS drops or crashes due to too many
+| Command                | Description                    | Permission                |
+|------------------------|--------------------------------|---------------------------|
+| `/happynewyear`        | Display help                   | `happynewyear.help`       |
+| `/happynewyear start`  | Force start the fireworks show | `happynewyear.forcestart` |
+| `/happynewyear stop`   | Force stop the fireworks show  | `happynewyear.forcestop`  |
+| `/happynewyear reload` | Reload plugin configuration    | `happynewyear.reload`     |
 
-● Ability to decide in which worlds the fireworks will be spawned
+## 🔑 Permissions
 
-## Commands
+| Permission                | Description              | Default |
+|---------------------------|--------------------------|---------|
+| `happynewyear.help`       | View help                | `true`  |
+| `happynewyear.forcestart` | Force start celebrations | `op`    |
+| `happynewyear.forcestop`  | Force stop celebrations  | `op`    |
+| `happynewyear.reload`     | Reload configuration     | `op`    |
 
-* **/happynewyear** - *Simple reload of the config file (Perms: `happynewyear.reload`)*
-* **/happynewyear start** - *Force start the FireWork Task, __time set to night required__ (
-  Perms: `happynewyear.forcestart`)*
-* **/happynewyear stop** - *Force stop the FireWork Task (Perms: `happynewyear.forcestop`)*
+## 🔗 Plugin Integrations
 
-# Support
+- **[lukyn76's ImageFireworksPro](https://github.com/heyxmirko/ImageFireworksPro/)** - Enhance your fireworks with
+  custom images!
+
+# 💬 Support
 
 <div align="center">
 
@@ -46,6 +69,20 @@ set to RANDOM all types will be used)
 
 </div>
 
-# Download
+# 📥 Download
 
 [![Spigotmc](https://static.spigotmc.org/img/spigot.png)](https://www.spigotmc.org/resources/.87326/)          [![BuiltByBit](https://pbs.twimg.com/profile_images/1557308606579556352/suzgxeGs_200x200.jpg)](https://builtbybit.com/resources/18553/)          [![hangar](https://avatars.githubusercontent.com/u/86071345?s=200&v=4)](https://hangar.papermc.io/xSavior_of_God/HappyNewYear)          [![modrinth](https://avatars.githubusercontent.com/u/67560307?s=200&v=4)](https://modrinth.com/plugin/happy-new-year/)
+
+<br>
+<br>
+<br>
+<br>
+
+<div align="center">
+
+That's it, I hope you like this plugin, just let me know by **leaving a Star⭐** to the resource
+
+</div>
+
+_Small thanks to the Essentials Team for creating an easy and intuitive class for converting game ticks into readable
+time._
