@@ -112,9 +112,33 @@ Worlds:
   Ends: "05:30"
   # If true, the indicated worlds will be in blacklist
   # If false, the indicated worlds will be in whitelist
-  Blacklist: false
+  Blacklist: true
   # List of the various worlds names
   # Set to 'ALLWORLDS' to use all worlds!
   # (NB: is cAsE sEnSiTiVe)
   List:
-    - 'world'
+    - 'ALLWORLDS'
+
+# Dependencies management
+Hooks:
+  # lukyn76's ImageFireworksPro
+  #
+  # Spawn image to fireworks
+  # Source Code: https://github.com/heyxmirko/ImageFireworksPro/
+  ImageFireworksPro:
+    Enabled: false
+    # IDs of the fireworks to be spawned
+    # use 'RANDOM' to spawn a random firework from the full list
+    FireworkEffectTypes:
+      - 'RANDOM'
+
+# Message settings
+Messages:
+  Prefix: "&e&lHappyNewYear &r"
+  # List of error messages
+  Errors:
+    # Message when the player doesn't have permission to use the command
+    NoPermission: "&cYou don't have permission to use this command!"
+    # Message when the player doesn't have permission to use any sub-commands
+    # but has access to the help command
+    NoPermissionSubCommands: "&cYou don't have permission to use any sub-commands!"

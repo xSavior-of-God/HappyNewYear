@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0">
     <groupId>com.xSavior_of_God</groupId>
     <artifactId>HappyNewYear</artifactId>
-    <version>2.3</version>
+    <version>2.4</version>
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
@@ -58,12 +58,60 @@
                     </replacements>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>shaded</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <artifactSet>
+                                <includes>
+                                    <include>**</include>
+                                </includes>
+                            </artifactSet>
+
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>INFO_BIN</exclude>
+                                        <exclude>INFO_SRC</exclude>
+                                        <exclude>LICENSE</exclude>
+                                        <exclude>LICENSE.txt</exclude>
+                                        <exclude>README</exclude>
+                                        <exclude>META-INF/**</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <relocations>
+                                <relocation>
+                                    <pattern>org.fusesource.jansi</pattern>
+                                    <shadedPattern>dev.herox.external.HappyNewYear.org.fusesource.jansi</shadedPattern>
+                                </relocation>
+                            </relocations>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     <repositories>
         <repository> <!-- Spigot -->
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository> <!-- jansi -->
+            <id>jansi</id>
+            <url>https://mvnrepository.com/artifact/org.fusesource.jansi/jansi</url>
         </repository>
         <repository> <!-- Mojang -->
             <id>mojang</id>
@@ -75,14 +123,27 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.21.3-R0.1-SNAPSHOT</version>
+            <version>1.21.10-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.mojang</groupId>
             <artifactId>brigadier</artifactId>
-            <version>1.0.18</version>
+            <version>1.3.10</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.lukyn76.imagefireworkspro</groupId>
+            <artifactId>imagefireworkspro</artifactId>
+            <version>1.1.6</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/imagefireworkspro.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.fusesource.jansi</groupId>
+            <artifactId>jansi</artifactId>
+            <version>2.4.2</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

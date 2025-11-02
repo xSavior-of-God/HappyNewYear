@@ -2,13 +2,18 @@ package com.xSavior_of_God.HappyNewYear;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.xSavior_of_God.HappyNewYear.commands.Command;
 import com.xSavior_of_God.HappyNewYear.events.HappyNewYearListeners;
+import com.xSavior_of_God.HappyNewYear.hooks.imagefireworksreborn.ImageFireworksRebornHook;
 import com.xSavior_of_God.HappyNewYear.manager.WorldManager;
 import com.xSavior_of_God.HappyNewYear.tasks.AlwaysNightTask;
 import com.xSavior_of_God.HappyNewYear.tasks.Task;
+import com.xSavior_of_God.HappyNewYear.utils.ColoredLogger;
 import com.xSavior_of_God.HappyNewYear.utils.CommentedConfiguration;
 import com.xSavior_of_God.HappyNewYear.utils.Utils;
 import org.bukkit.Bukkit;
@@ -16,6 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class HappyNewYear extends JavaPlugin {
     public static HappyNewYear instance;
+    public static ColoredLogger internalLogger;
     public static boolean
             enabled,
             forceStart,
@@ -36,18 +42,25 @@ public class HappyNewYear extends JavaPlugin {
     private String
             spawnAnimationType,
             hourlyTimezone;
+    public static ImageFireworksRebornHook imageFireworksRebornHook;
+    public static List<String> fireworkHooks = new ArrayList<>();
 
     public static WorldManager wm = new WorldManager();
 
+    public Map<String, String> messages = new HashMap<>();
+
     public void onEnable() {
         instance = this;
+        internalLogger = new ColoredLogger("[HappyNewYear] ");
         Utils.log("\r\n" +
                 "\r\n" +
                 "\r\n"
                 + "&e  |  |    \\    _ \\  _ \\ \\ \\  /     \\ |  __| \\ \\      /   \\ \\  /  __|    \\    _ \\   | \r\n"
                 + "  __ |   _ \\   __/  __/  \\  /     .  |  _|   \\ \\ \\  /     \\  /   _|    _ \\     /  _| \r\n"
                 + " _| _| _/  _\\ _|   _|     _|     _|\\_| ___|   \\_/\\_/       _|   ___| _/  _\\ _|_\\  _)\r\n"
-                + "\r\n&e© Developed by &fxSavior_of_God &ewith &4<3 &7v" + getDescription().getVersion()
+                + "\r\n"
+                + "\r\n&fVersion &e" + getDescription().getVersion()
+                + "\r\n&e© Developed by &fxSavior_of_God &ewith &4<3"
                 + "\r\n"
                 + "\r\n");
 
@@ -68,13 +81,32 @@ public class HappyNewYear extends JavaPlugin {
         loadConfig();
         getCommand("happynewyear").setExecutor(new Command());
         Bukkit.getPluginManager().registerEvents(new HappyNewYearListeners(), this);
+        fireworkHooks = new ArrayList<>();
+
+
+        fireworkEffectTypes = getConfig().getStringList("FireworkEffectTypes");
+        if(!fireworkEffectTypes.isEmpty())
+            fireworkHooks.add("DEFAULT");
+
+        // Hook ImageFireworksPro
+        if (getConfig().getBoolean("Hooks.ImageFireworksPro.Enabled")) {
+            if (Bukkit.getPluginManager().getPlugin("ImageFireworksPro") != null) {
+                imageFireworksRebornHook = new ImageFireworksRebornHook(getConfig().getStringList("Hooks.ImageFireworksPro.FireworkEffectTypes"));
+                fireworkHooks.add("IMAGEFIREWORKSPRO");
+                Utils.log("[HappyNewYear] &eImageFireworksPro &fHooked!");
+            } else {
+                Utils.log("[HappyNewYear] &eImageFireworksPro &cNot Found!");
+            }
+        }
+
 
         if (enabled) {
             fireworkTask = new Task(spawnAnimationType, hourlyDuration, hourlyTimezone);
             if (wm.getAlwaysNightEnabled() || wm.getInRealLifeEnabled())
                 this.alwaysNightTask = new AlwaysNightTask();
-        } else
+        } else {
             Utils.log("&4HEY! &fBefore you can use me, you need to configure and enable me from config.yml ( Remember to set \"Enabled\" to true ! )");
+        }
     }
 
     public void onDisable() {
@@ -82,6 +114,8 @@ public class HappyNewYear extends JavaPlugin {
             this.alwaysNightTask.StopTask();
         if ((this.fireworkTask != null || enabled) && this.fireworkTask != null)
             this.fireworkTask.StopTask();
+        imageFireworksRebornHook = null;
+        fireworkHooks.clear();
         Utils.log("&eHappy New Year &cDisabled!");
     }
 
@@ -96,7 +130,6 @@ public class HappyNewYear extends JavaPlugin {
         randomSpawnPosition_Horizontal = getConfig().getInt("RandomSpawnPosition.Horizontal");
         randomSpawnPosition_Vertical = getConfig().getInt("RandomSpawnPosition.Vertical");
         explosionHeight = getConfig().getInt("ExplosionHeight");
-        fireworkEffectTypes = getConfig().getStringList("FireworkEffectTypes");
         wm.setBlacklist(getConfig().getBoolean("Worlds.Blacklist"));
         wm.setOnNightEnabled(getConfig().getBoolean("Worlds.OnlyOnNight.Enabled"));
         wm.setAlwaysNightEnabled(getConfig().getBoolean("Worlds.AlwaysNight.Enabled"));
@@ -110,8 +143,39 @@ public class HappyNewYear extends JavaPlugin {
             worlds.clear();
             Bukkit.getServer().getWorlds().forEach(world -> worlds.add(world.getName()));
         }
-        Utils.log("&aHappyNewYear will work in this worlds: &f" + worlds.stream().reduce((a, b) -> a + ", " + b).orElse("&cNO WORLD FOUND!"));
+
+        if(wm.getBlacklist()) {
+            Utils.log("&aHappyNewYear is in &fBLACKLIST &amode.");
+            Utils.log("&aHappyNewYear will not work in these worlds: &f" + worlds.stream().reduce((a, b) -> a + ", " + b).orElse("&cNO WORLD IN BLACKLIST!"));
+        } else {
+            Utils.log("&aHappyNewYear is in &fWHITELIST &amode.");
+            Utils.log("&aHappyNewYear will work in these worlds: &f" + worlds.stream().reduce((a, b) -> a + ", " + b).orElse("&cNO WORLD IN WHITELIST!"));
+        }
+
         wm.setWorldsName(worlds);
+
+        loadMessages();
+    }
+
+    private void loadMessages() {
+        this.messages.clear();
+        this.messages = new HashMap<>();
+        loadMessagesRecursive("Messages", getConfig().getConfigurationSection("Messages"));
+    }
+
+    private void loadMessagesRecursive(String parentKey, org.bukkit.configuration.ConfigurationSection section) {
+        for (String key : section.getKeys(false)) {
+            String fullKey = parentKey.isEmpty() ? key : parentKey + "." + key;
+
+            if (section.isConfigurationSection(key)) {
+                loadMessagesRecursive(fullKey, section.getConfigurationSection(key));
+            } else {
+                String value = section.getString(key);
+                // Remove "Messages." prefix to allow get("Error.NoPermission")
+                String messageKey = fullKey.replace("Messages.", "");
+                this.messages.put(messageKey, value);
+            }
+        }
     }
 
 }

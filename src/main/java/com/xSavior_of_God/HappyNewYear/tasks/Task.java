@@ -120,8 +120,7 @@ public class Task {
                     Random rand = new Random();
                     for (int c = 0; c < HappyNewYear.amountPerPlayer; c++) {
                         Bukkit.getScheduler().runTaskLater(HappyNewYear.instance, () -> {
-                            spawnFireworks(randomLocation(player.getLocation()), HappyNewYear.fireworkEffectTypes
-                                    .get(ThreadLocalRandom.current().nextInt(0, HappyNewYear.fireworkEffectTypes.size())));
+                            spawnFireworks(randomLocation(player.getLocation()));
                         }, (rand.nextInt(HappyNewYear.timer) + 1));
                     }
                 });
@@ -137,17 +136,36 @@ public class Task {
                         return;
 
                     for (int c = 0; c < HappyNewYear.amountPerPlayer; c++) {
-                        spawnFireworks(randomLocation(player.getLocation()), HappyNewYear.fireworkEffectTypes
-                                .get(ThreadLocalRandom.current().nextInt(0, HappyNewYear.fireworkEffectTypes.size())));
+                        spawnFireworks(randomLocation(player.getLocation()));
                     }
                 });
             }
         }
     }
 
-    private void spawnFireworks(final Location LOC, final String TYPE) {
+    private void spawnFireworks(final Location LOC) {
+        final String fireworkHook = HappyNewYear.fireworkHooks.get(ThreadLocalRandom.current().nextInt(0, HappyNewYear.fireworkHooks.size()));
+        switch(fireworkHook) {
+            case "IMAGEFIREWORKSPRO":
+
+                if (HappyNewYear.imageFireworksRebornHook != null) {
+                    try {
+                        HappyNewYear.imageFireworksRebornHook.spawnFirework(LOC);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                break;
+            default:
+                spawnVanillaFireworks(LOC, HappyNewYear.fireworkEffectTypes.get(ThreadLocalRandom.current().nextInt(0, HappyNewYear.fireworkEffectTypes.size())));
+                break;
+        }
+    }
+
+    private void spawnVanillaFireworks(final Location LOC, final String TYPE) {
         if (LOC.getWorld() == null) {
-            Bukkit.getLogger().log(Level.WARNING, "Something went wrong while spawning fireworks. World is null!");
+            Utils.log(Level.WARNING, "Something went wrong while spawning fireworks. World is null!");
             return;
         }
 
@@ -185,6 +203,8 @@ public class Task {
                 HappyNewYear.randomSpawnPosition_Horizontal + 1);
         int Vertical = ThreadLocalRandom.current().nextInt(HappyNewYear.randomSpawnPosition_Vertical * -1,
                 HappyNewYear.randomSpawnPosition_Vertical + 1);
+        LOC.setYaw(ThreadLocalRandom.current().nextInt(0, 360));
+        LOC.setPitch(ThreadLocalRandom.current().nextInt(0, 360));
         return LOC.add(Horizontal, Vertical + HappyNewYear.explosionHeight, Horizontal2);
     }
 
