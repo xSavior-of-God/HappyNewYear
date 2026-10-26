@@ -7,8 +7,7 @@ import java.util.List;
 
 import com.xSavior_of_God.HappyNewYear.HappyNewYear;
 import com.xSavior_of_God.HappyNewYear.utils.Utils;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.scheduler.BukkitTask;
 
 public class AlwaysNightTask {
@@ -47,13 +46,18 @@ public class AlwaysNightTask {
 
     }
 
+    @SuppressWarnings("unchecked")
     public void StopTask() {
         if (this.realTimeTask != null)
             this.realTimeTask.cancel();
         if (this.alwaysNightTask != null) {
             this.alwaysNightTask.cancel();
             for (World w : worlds) {
-                w.setGameRule(org.bukkit.GameRule.DO_DAYLIGHT_CYCLE, true);
+                try {
+                    w.setGameRule(Registry.GAME_RULE.get(NamespacedKey.minecraft("advance_time")), false);
+                } catch (Exception ex) {
+                    w.setGameRule(Registry.GAME_RULE.get(NamespacedKey.minecraft("do_daylight_cycle")), false);
+                }
             }
         }
     }
