@@ -20,3 +20,6 @@ permissions:
   happynewyear.forcestop:
     description: you can stop the fireworks
     default: op
+  happynewyear.preset:
+    description: you can apply presets
+    default: op

@@ -38,12 +38,13 @@ Thanks to this plugin you can make your Minecraft world magical for **THE NEW YE
 
 **Aliases:** `/hny`, `/newyear`, `/ny`
 
-| Command                | Description                    | Permission                |
-|------------------------|--------------------------------|---------------------------|
-| `/happynewyear`        | Display help                   | `happynewyear.help`       |
-| `/happynewyear start`  | Force start the fireworks show | `happynewyear.forcestart` |
-| `/happynewyear stop`   | Force stop the fireworks show  | `happynewyear.forcestop`  |
-| `/happynewyear reload` | Reload plugin configuration    | `happynewyear.reload`     |
+| Command                        | Description                    | Permission                |
+|--------------------------------|--------------------------------|---------------------------|
+| `/happynewyear`                | Display help                   | `happynewyear.help`       |
+| `/happynewyear start`          | Force start the fireworks show | `happynewyear.forcestart` |
+| `/happynewyear stop`           | Force stop the fireworks show  | `happynewyear.forcestop`  |
+| `/happynewyear preset <name>`  | Apply a preset and reload      | `happynewyear.preset`     |
+| `/happynewyear reload`         | Reload plugin configuration    | `happynewyear.reload`     |
 
 ## 🔑 Permissions
 
@@ -52,6 +53,7 @@ Thanks to this plugin you can make your Minecraft world magical for **THE NEW YE
 | `happynewyear.help`       | View help                | `true`  |
 | `happynewyear.forcestart` | Force start celebrations | `op`    |
 | `happynewyear.forcestop`  | Force stop celebrations  | `op`    |
+| `happynewyear.preset`     | Apply presets            | `op`    |
 | `happynewyear.reload`     | Reload configuration     | `op`    |
 
 ## 🔗 Plugin Integrations

@@ -144,6 +144,9 @@ public class Task {
     }
 
     private void spawnFireworks(final Location LOC) {
+        if (HappyNewYear.fireworkHooks == null || HappyNewYear.fireworkHooks.isEmpty()) {
+            return;
+        }
         final String fireworkHook = HappyNewYear.fireworkHooks.get(ThreadLocalRandom.current().nextInt(0, HappyNewYear.fireworkHooks.size()));
         switch(fireworkHook) {
             case "IMAGEFIREWORKSPRO":
@@ -158,6 +161,9 @@ public class Task {
 
                 break;
             default:
+                if (HappyNewYear.fireworkEffectTypes == null || HappyNewYear.fireworkEffectTypes.isEmpty()) {
+                    return;
+                }
                 spawnVanillaFireworks(LOC, HappyNewYear.fireworkEffectTypes.get(ThreadLocalRandom.current().nextInt(0, HappyNewYear.fireworkEffectTypes.size())));
                 break;
         }

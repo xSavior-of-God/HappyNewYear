@@ -15,8 +15,11 @@ import com.xSavior_of_God.HappyNewYear.tasks.AlwaysNightTask;
 import com.xSavior_of_God.HappyNewYear.tasks.Task;
 import com.xSavior_of_God.HappyNewYear.utils.ColoredLogger;
 import com.xSavior_of_God.HappyNewYear.utils.CommentedConfiguration;
+import com.xSavior_of_God.HappyNewYear.presets.PresetManager;
 import com.xSavior_of_God.HappyNewYear.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class HappyNewYear extends JavaPlugin {
@@ -48,6 +51,7 @@ public class HappyNewYear extends JavaPlugin {
     public static WorldManager wm = new WorldManager();
 
     public Map<String, String> messages = new HashMap<>();
+    private HappyNewYearListeners listeners;
 
     public void onEnable() {
         instance = this;
@@ -78,9 +82,14 @@ public class HappyNewYear extends JavaPlugin {
 
         forceStart = false;
 
+        PresetManager.init();
         loadConfig();
-        getCommand("happynewyear").setExecutor(new Command());
-        Bukkit.getPluginManager().registerEvents(new HappyNewYearListeners(), this);
+        PluginCommand cmd = getCommand("happynewyear");
+        if (cmd != null) {
+            cmd.setExecutor(new Command());
+        }
+        listeners = new HappyNewYearListeners();
+        Bukkit.getPluginManager().registerEvents(listeners, this);
         fireworkHooks = new ArrayList<>();
 
 
@@ -110,13 +119,80 @@ public class HappyNewYear extends JavaPlugin {
     }
 
     public void onDisable() {
-        if ((this.alwaysNightTask != null || wm.getAlwaysNightEnabled()) && this.alwaysNightTask != null)
-            this.alwaysNightTask.StopTask();
-        if ((this.fireworkTask != null || enabled) && this.fireworkTask != null)
-            this.fireworkTask.StopTask();
-        imageFireworksRebornHook = null;
-        fireworkHooks.clear();
+        shutdown();
         Utils.log("&eHappy New Year &cDisabled!");
+    }
+
+    private void shutdown() {
+        if (this.alwaysNightTask != null) {
+            this.alwaysNightTask.StopTask();
+            this.alwaysNightTask = null;
+        }
+        if (this.fireworkTask != null) {
+            this.fireworkTask.StopTask();
+            this.fireworkTask = null;
+        }
+        if (listeners != null) {
+            HandlerList.unregisterAll(listeners);
+            listeners = null;
+        }
+        PluginCommand cmd = getCommand("happynewyear");
+        if (cmd != null) {
+            cmd.setExecutor(null);
+        }
+        imageFireworksRebornHook = null;
+        if (fireworkHooks != null) {
+            fireworkHooks.clear();
+        }
+        forceStart = false;
+        forceStop = false;
+    }
+
+    public void softReload() {
+        shutdown();
+        reloadConfig();
+        final File configFile = new File(this.getDataFolder(), "config.yml");
+        if (!configFile.exists()) {
+            saveResource("config.yml", false);
+        }
+        CommentedConfiguration cfg = CommentedConfiguration.loadConfiguration(configFile);
+        try {
+            cfg.syncWithConfig(configFile, this.getResource("config.yml"), "FireworkEffectTypes", "Worlds.List");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        forceStart = false;
+        loadConfig();
+        PluginCommand cmd = getCommand("happynewyear");
+        if (cmd != null) {
+            cmd.setExecutor(new Command());
+        }
+        listeners = new HappyNewYearListeners();
+        Bukkit.getPluginManager().registerEvents(listeners, this);
+        fireworkHooks = new ArrayList<>();
+
+        fireworkEffectTypes = getConfig().getStringList("FireworkEffectTypes");
+        if (fireworkEffectTypes != null && !fireworkEffectTypes.isEmpty())
+            fireworkHooks.add("DEFAULT");
+
+        if (getConfig().getBoolean("Hooks.ImageFireworksPro.Enabled")) {
+            if (Bukkit.getPluginManager().getPlugin("ImageFireworksPro") != null) {
+                imageFireworksRebornHook = new com.xSavior_of_God.HappyNewYear.hooks.imagefireworksreborn.ImageFireworksRebornHook(getConfig().getStringList("Hooks.ImageFireworksPro.FireworkEffectTypes"));
+                fireworkHooks.add("IMAGEFIREWORKSPRO");
+                Utils.log("[HappyNewYear] &eImageFireworksPro &fHooked!");
+            } else {
+                Utils.log("[HappyNewYear] &eImageFireworksPro &cNot Found!");
+            }
+        }
+
+        if (enabled) {
+            fireworkTask = new Task(spawnAnimationType, hourlyDuration, hourlyTimezone);
+            if (wm.getAlwaysNightEnabled() || wm.getInRealLifeEnabled())
+                this.alwaysNightTask = new AlwaysNightTask();
+        } else {
+            Utils.log("&4HEY! &fBefore you can use me, you need to configure and enable me from config.yml ( Remember to set \"Enabled\" to true ! )");
+        }
     }
 
     private void loadConfig() {

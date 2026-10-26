@@ -1,7 +1,7 @@
 package com.xSavior_of_God.HappyNewYear.commands;
 
 import com.xSavior_of_God.HappyNewYear.HappyNewYear;
-import com.xSavior_of_God.HappyNewYear.utils.Reload;
+import com.xSavior_of_God.HappyNewYear.presets.PresetManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -35,9 +35,39 @@ public class Command implements CommandExecutor {
                 case "reload":
                     if (sender instanceof ConsoleCommandSender || sender.isOp() || sender.hasPermission("happynewyear.reload")) {
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6Reloading..."));
-                        HappyNewYear.instance.reloadConfig();
-                        Reload.reload();
+                        HappyNewYear.instance.softReload();
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aReloaded!"));
+                        return true;
+                    }
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cYou don't have permission to use this command!"));
+                    break;
+                case "preset":
+                    if (sender instanceof ConsoleCommandSender || sender.isOp() || sender.hasPermission("happynewyear.preset") || sender.hasPermission("happynewyear.reload")) {
+                        if (args.length < 2) {
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cUsage: /" + commandLabel + " preset <name> [confirm]"));
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7Available presets: " + String.join(", ", PresetManager.getPresetNames())));
+                            return true;
+                        }
+                        String presetName = args[1];
+                        if (!PresetManager.presetExists(presetName)) {
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cPreset '" + presetName + "' not found!"));
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7Available presets: " + String.join(", ", PresetManager.getPresetNames())));
+                            return true;
+                        }
+                        if (args.length < 3 || !args[2].equalsIgnoreCase("confirm")) {
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&eAre you sure you want to apply preset '" + presetName + "'?"));
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&eThis will overwrite your current config.yml and create a backup."));
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7Run: /" + commandLabel + " preset " + presetName + " confirm"));
+                            return true;
+                        }
+                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6Creating backup and applying preset '" + presetName + "'..."));
+                        if (PresetManager.applyPreset(presetName)) {
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6Reloading..."));
+                            HappyNewYear.instance.softReload();
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aPreset '" + presetName + "' applied and reloaded!"));
+                        } else {
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cFailed to apply preset '" + presetName + "'!"));
+                        }
                         return true;
                     }
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cYou don't have permission to use this command!"));
@@ -70,6 +100,10 @@ public class Command implements CommandExecutor {
             if (sender instanceof ConsoleCommandSender || sender.isOp() || sender.hasPermission("happynewyear.reload")) {
                 hasOnePermission = true;
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f/" + commandLabel + " reload   &7Reload plugin configuration"));
+            }
+            if (sender instanceof ConsoleCommandSender || sender.isOp() || sender.hasPermission("happynewyear.preset") || sender.hasPermission("happynewyear.reload")) {
+                hasOnePermission = true;
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f/" + commandLabel + " preset <name> [confirm]   &7Apply a preset and reload"));
             }
 
             if (!hasOnePermission) {

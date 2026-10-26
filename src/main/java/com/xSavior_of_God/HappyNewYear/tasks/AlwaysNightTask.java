@@ -16,7 +16,7 @@ public class AlwaysNightTask {
     List<World> worlds;
 
     public AlwaysNightTask() {
-        worlds = Bukkit.getServer().getWorlds();
+        worlds = new java.util.ArrayList<>(Bukkit.getServer().getWorlds());
         if (HappyNewYear.wm.getBlacklist()) {
             worlds.removeIf(w -> HappyNewYear.wm.getWorldsName().contains(w.getName()));
         } else {
@@ -26,6 +26,16 @@ public class AlwaysNightTask {
         worlds.removeIf(w -> !w.getEnvironment().equals(World.Environment.NORMAL));
 
         if (HappyNewYear.wm.getInRealLifeEnabled()) {
+            for (World w : worlds) {
+                try {
+                    w.setGameRule(Registry.GAME_RULE.get(NamespacedKey.minecraft("advance_time")), false);
+                } catch (Exception ex) {
+                    try {
+                        w.setGameRule(Registry.GAME_RULE.get(NamespacedKey.minecraft("do_daylight_cycle")), false);
+                    } catch (Exception ignored) {
+                    }
+                }
+            }
             this.realTimeTask = Bukkit.getScheduler().runTaskTimer(HappyNewYear.instance, () -> {
                 for (World w : worlds) {
                     long time = Utils.parse24(LocalTime.now(ZoneId.of(HappyNewYear.wm.getTimezone()))
@@ -35,6 +45,16 @@ public class AlwaysNightTask {
                 }
             }, 20L, 1L);
         } else if (HappyNewYear.wm.getAlwaysNightEnabled()) {
+            for (World w : worlds) {
+                try {
+                    w.setGameRule(Registry.GAME_RULE.get(NamespacedKey.minecraft("advance_time")), false);
+                } catch (Exception ex) {
+                    try {
+                        w.setGameRule(Registry.GAME_RULE.get(NamespacedKey.minecraft("do_daylight_cycle")), false);
+                    } catch (Exception ignored) {
+                    }
+                }
+            }
             this.alwaysNightTask = Bukkit.getScheduler().runTaskTimer(HappyNewYear.instance, () -> {
                 for (World w : worlds) {
                     if (w.getTime() != 18000L) {
@@ -54,9 +74,9 @@ public class AlwaysNightTask {
             this.alwaysNightTask.cancel();
             for (World w : worlds) {
                 try {
-                    w.setGameRule(Registry.GAME_RULE.get(NamespacedKey.minecraft("advance_time")), false);
+                    w.setGameRule(Registry.GAME_RULE.get(NamespacedKey.minecraft("advance_time")), true);
                 } catch (Exception ex) {
-                    w.setGameRule(Registry.GAME_RULE.get(NamespacedKey.minecraft("do_daylight_cycle")), false);
+                    w.setGameRule(Registry.GAME_RULE.get(NamespacedKey.minecraft("do_daylight_cycle")), true);
                 }
             }
         }
